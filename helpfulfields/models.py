@@ -1,6 +1,15 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 from django.db import models
+from helpfulfields.text import (seo_title_label, seo_title_help,
+                                seo_description_label, seo_description_help,
+                                seo_keywords_label, seo_keywords_help,
+                                soft_delete_label, soft_delete_help,
+                                soft_delete_initial, soft_delete_false,
+                                soft_delete_true, titles_title_label,
+                                titles_menu_label, titles_menu_help, publish_label,
+                                publish_help, unpublish_label, unpublish_help)
+
 
 class ChangeTracking(models.Model):
     created = models.DateTimeField(auto_now_add=True)

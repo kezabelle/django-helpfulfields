@@ -17,7 +17,16 @@ seo_keywords_label = _(u'page keywords')
 seo_keywords_help = _(u'may be used by search engines to flag you as spamming.')
 
 seo_fieldset_label = _(u'search engine optimisation')
+
+soft_delete_label = _(u'deleted?')
+soft_delete_help = _(u'has this been removed from the website?')
+
+soft_delete_initial = _(u'unmodified')
+soft_delete_false = _(u'restored')
+soft_delete_true = _(u'deleted')
+
 changetracking_fieldset_label = _(u'changes')
+
 dates_fieldset_label = _(u'publishing info')
 
 publish_label = _(u'publishing date')
