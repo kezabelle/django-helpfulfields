@@ -75,3 +75,15 @@ class Publishing(models.Model):
         abstract = True
 
 
+class SoftDelete(models.Model):
+    DELETED_CHOICES = (
+        (None, soft_delete_initial),
+        (False, soft_delete_false),
+        (True, soft_delete_true)
+        )
+    soft_delete = models.NullBooleanField(default=DELETED_CHOICES[0][0],
+        choices=DELETED_CHOICES, verbose_name=soft_delete_label,
+        help_text=soft_delete_help)
+
+    class Meta:
+        abstract = True
