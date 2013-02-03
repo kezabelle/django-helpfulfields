@@ -8,6 +8,9 @@ from django.utils.translation import ugettext_lazy as _
 titles_title_label = _(u'title')
 titles_menu_label = _(u'menu title')
 titles_menu_help = _(u'may be displayed in menus, instead of the standard title')
+
+dates_fieldset_label = _(u'publishing info')
+
 publish_label = _(u'publishing date')
 publish_help = _(u'the date and time on which this object should be visible on '
     u'the website.')
