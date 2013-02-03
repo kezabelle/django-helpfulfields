@@ -9,6 +9,15 @@ titles_title_label = _(u'title')
 titles_menu_label = _(u'menu title')
 titles_menu_help = _(u'may be displayed in menus, instead of the standard title')
 
+seo_title_label = _(u'page title')
+seo_title_help = _(u'displayed by the web browser in the window/tab/taskbar.')
+seo_description_label = _(u'page description')
+seo_description_help = _(u'may be displayed by search engines in results.')
+seo_keywords_label = _(u'page keywords')
+seo_keywords_help = _(u'may be used by search engines to flag you as spamming.')
+
+seo_fieldset_label = _(u'search engine optimisation')
+changetracking_fieldset_label = _(u'changes')
 dates_fieldset_label = _(u'publishing info')
 
 publish_label = _(u'publishing date')
