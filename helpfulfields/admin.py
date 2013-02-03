@@ -35,3 +35,15 @@ seo_fieldset = [
     }
 ]
 
+changetracking_readonlys = ['created', 'modified']
+changetracking_fieldset = [
+    changetracking_fieldset_label, {
+        'classes': [
+            'collapse'
+        ],
+        'fields': [
+            'created',
+            'modified',
+        ]
+    }
+]
