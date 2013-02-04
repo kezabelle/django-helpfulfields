@@ -35,3 +35,5 @@ publish_help = _(u'the date and time on which this object should be visible on '
 unpublish_label = _(u'publishing end date')
 unpublish_help = _(u'if filled in, this date and time are when this object will '
     u'cease being available.')
+
+view_on_site_label = _(u'View on site')

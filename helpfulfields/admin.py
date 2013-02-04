@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from helpfulfields.text import (seo_fieldset_label, changetracking_fieldset_label,
-                                dates_fieldset_label)
+                                dates_fieldset_label, view_on_site_label)
 
 titles_fieldset = [
     None, {
@@ -47,3 +47,11 @@ changetracking_fieldset = [
         ]
     }
 ]
+
+
+class ViewOnSite(object):
+
+    def view_on_site(self, obj):
+        return 1
+    view_on_site.allow_tags = True
+    view_on_site.short_description = view_on_site_label
