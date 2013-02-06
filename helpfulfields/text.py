@@ -29,6 +29,9 @@ changetracking_fieldset_label = _(u'changes')
 
 dates_fieldset_label = _(u'publishing info')
 
+quick_publish_label = _(u'is published')
+quick_publish_help = _(u'should this object be visible on the website')
+
 publish_label = _(u'publishing date')
 publish_help = _(u'the date and time on which this object should be visible on '
     u'the website.')

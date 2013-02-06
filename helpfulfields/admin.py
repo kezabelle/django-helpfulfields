@@ -12,7 +12,17 @@ titles_fieldset = [
     }
 ]
 
+
 publishing_fieldset = [
+    None, {
+        'classes': [],
+        'fields': [
+            'is_published',
+        ]
+    }
+]
+
+date_publishing_fieldset = [
     dates_fieldset_label, {
         'classes': [],
         'fields': [

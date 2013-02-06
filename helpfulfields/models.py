@@ -8,7 +8,8 @@ from helpfulfields.text import (seo_title_label, seo_title_help,
                                 soft_delete_initial, soft_delete_false,
                                 soft_delete_true, titles_title_label,
                                 titles_menu_label, titles_menu_help, publish_label,
-                                publish_help, unpublish_label, unpublish_help)
+                                publish_help, unpublish_label, unpublish_help,
+                                quick_publish_label, quick_publish_help)
 
 
 class ChangeTracking(models.Model):
@@ -67,6 +68,15 @@ class SEO(models.Model):
 
 
 class Publishing(models.Model):
+    is_published = models.BooleanField(default=False, verbose_name=quick_publish_label,
+        help_text=quick_publish_help)
+
+    class Meta:
+        abstract = True
+
+
+
+class DatePublishing(models.Model):
     publish_on = models.DateTimeField(default=datetime.now,
         verbose_name=publish_label, help_text=publish_help)
     unpublish_on = models.DateTimeField(default=None, blank=True, null=True,
