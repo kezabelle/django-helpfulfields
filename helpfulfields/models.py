@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
+from django.contrib.contenttypes.generic import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from helpfulfields.text import (seo_title_label, seo_title_help,
                                 seo_description_label, seo_description_help,
@@ -13,6 +15,11 @@ from helpfulfields.text import (seo_title_label, seo_title_help,
 
 
 class ChangeTracking(models.Model):
+    """
+    Abstract model for extending custom models with an audit of when things were
+    changed. By extention, allows us to use get_latest_by to establish the most
+    recent things.
+    """
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -94,6 +101,7 @@ class DatePublishing(models.Model):
         abstract = True
 
 
+
 class SoftDelete(models.Model):
     DELETED_CHOICES = (
         (None, soft_delete_initial),
@@ -103,6 +111,24 @@ class SoftDelete(models.Model):
     soft_delete = models.NullBooleanField(default=DELETED_CHOICES[0][0],
         choices=DELETED_CHOICES, verbose_name=soft_delete_label,
         help_text=soft_delete_help)
+
+    class Meta:
+        abstract = True
+
+
+
+class Generic(models.Model):
+    """
+    For handling generic relations in a uniform way (assuming that only 1 is
+    required on the subclassing model).
+
+      * Doesn't provide a related_name from ContentType back to the subclass.
+      * Uses a CharField for the content_id, so that apps may have non-integer
+        primary keys (eg: uuid4())
+    """
+    content_type = models.ForeignKey(ContentType, related_name='+')
+    content_id = models.CharField(max_length=255, db_index=True)
+    content_object = GenericForeignKey('content_type', 'content_id')
 
     class Meta:
         abstract = True
