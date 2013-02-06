@@ -17,7 +17,7 @@ from helpfulfields.text import (seo_title_label, seo_title_help,
 class ChangeTracking(models.Model):
     """
     Abstract model for extending custom models with an audit of when things were
-    changed. By extention, allows us to use get_latest_by to establish the most
+    changed. By extension, allows us to use get_latest_by to establish the most
     recent things.
     """
     created = models.DateTimeField(auto_now_add=True)
@@ -29,11 +29,17 @@ class ChangeTracking(models.Model):
 
 
 class Titles(models.Model):
+    """ Abstract model for providing a title + menu title field.
+
+    Also supplies a get_menu_title method, which falls back to the title if no
+    menu title is set.
+    """
     title = models.CharField(max_length=255, verbose_name=titles_title_label)
     menu_title = models.CharField(max_length=255, blank=True,
         verbose_name=titles_menu_label, help_text=titles_menu_help)
 
     def get_menu_title(self):
+        """ utility method for django CMS api compatibility """
         if self.menu_title:
             return self.menu_title
         return self.title
@@ -75,8 +81,15 @@ class SEO(models.Model):
 
 
 class Publishing(models.Model):
+    """
+    For when you don't need date based publishing, this abstract model
+    provides the same API.
+    """
     is_published = models.BooleanField(default=False, verbose_name=quick_publish_label,
         help_text=quick_publish_help)
+
+    def is_published(self):
+        return self.is_published
 
     class Meta:
         abstract = True
@@ -84,6 +97,10 @@ class Publishing(models.Model):
 
 
 class DatePublishing(models.Model):
+    """ A perennial favourite, publish start and end dates, as an abstract model.
+
+    Has the same `is_published()` method that `Publishing` has.
+    """
     publish_on = models.DateTimeField(default=datetime.now,
         verbose_name=publish_label, help_text=publish_help)
     unpublish_on = models.DateTimeField(default=None, blank=True, null=True,
@@ -103,6 +120,11 @@ class DatePublishing(models.Model):
 
 
 class SoftDelete(models.Model):
+    """ I've not actually used this yet. It's just a sketch of something I'd like.
+
+    The idea is that nothing should ever really be deleted, but I have no idea
+    how feasible this is at an abstract level.
+    """
     DELETED_CHOICES = (
         (None, soft_delete_initial),
         (False, soft_delete_false),
