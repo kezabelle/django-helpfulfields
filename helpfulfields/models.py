@@ -88,9 +88,6 @@ class Publishing(models.Model):
     is_published = models.BooleanField(default=False, verbose_name=quick_publish_label,
         help_text=quick_publish_help)
 
-    def is_published(self):
-        return self.is_published
-
     class Meta:
         abstract = True
 
@@ -99,14 +96,21 @@ class Publishing(models.Model):
 class DatePublishing(models.Model):
     """ A perennial favourite, publish start and end dates, as an abstract model.
 
-    Has the same `is_published()` method that `Publishing` has.
+    Has the same `is_published` attribute that `Publishing` has.
     """
     publish_on = models.DateTimeField(default=datetime.now,
         verbose_name=publish_label, help_text=publish_help)
     unpublish_on = models.DateTimeField(default=None, blank=True, null=True,
         verbose_name=unpublish_label, help_text=unpublish_help)
 
+    @property
     def is_published(self):
+        """
+        Method which behaves as a property, for API stability with `Publishing`
+
+        :return: Whether or not this object is currently visible
+        :rtype: boolean
+        """
         now = datetime.now()
         if self.unpublish_on is not None:
             return self.unpublish_on >= now and self.publish_on <= now
