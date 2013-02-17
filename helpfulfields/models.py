@@ -12,6 +12,7 @@ from helpfulfields.text import (seo_title_label, seo_title_help,
                                 titles_menu_label, titles_menu_help, publish_label,
                                 publish_help, unpublish_label, unpublish_help,
                                 quick_publish_label, quick_publish_help)
+from helpfulfields.utils import datediff
 
 
 class ChangeTracking(models.Model):
@@ -19,9 +20,20 @@ class ChangeTracking(models.Model):
     Abstract model for extending custom models with an audit of when things were
     changed. By extension, allows us to use get_latest_by to establish the most
     recent things.
+
+    .. note::
+        It transpires that this is basically an accidental rewrite of
+        `django-model-utils` :class:TimeStampedModel, though it provides a few
+        extra bits.
     """
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    def created_recently(self, minutes=30):
+        return datediff(self.modified, minutes=minutes)
+
+    def modified_recently(self, minutes=30):
+        return datediff(self.modified, minutes=minutes)
 
     class Meta:
         abstract = True
