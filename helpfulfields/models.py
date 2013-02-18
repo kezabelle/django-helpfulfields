@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, timedelta
+from datetime import datetime
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -9,9 +9,12 @@ from helpfulfields.text import (seo_title_label, seo_title_help,
                                 soft_delete_label, soft_delete_help,
                                 soft_delete_initial, soft_delete_false,
                                 soft_delete_true, titles_title_label,
-                                titles_menu_label, titles_menu_help, publish_label,
-                                publish_help, unpublish_label, unpublish_help,
-                                quick_publish_label, quick_publish_help)
+                                titles_menu_label, titles_menu_help,
+                                publish_label, publish_help, unpublish_label,
+                                unpublish_help, quick_publish_label,
+                                quick_publish_help, object_lacks_pk,
+                                object_not_deleted, created_label, created_help,
+                                modified_label, modified_help)
 from helpfulfields.utils import datediff
 
 
@@ -26,8 +29,10 @@ class ChangeTracking(models.Model):
         `django-model-utils` :class:TimeStampedModel, though it provides a few
         extra bits.
     """
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True, verbose_name=created_label,
+                                   help_text=created_help)
+    modified = models.DateTimeField(auto_now=True, verbose_name=modified_label,
+                                    help_text=modified_help)
 
     def created_recently(self, minutes=30):
         return datediff(self.modified, minutes=minutes)
@@ -39,7 +44,6 @@ class ChangeTracking(models.Model):
         abstract = True
 
 
-
 class Titles(models.Model):
     """ Abstract model for providing a title + menu title field.
 
@@ -48,7 +52,8 @@ class Titles(models.Model):
     """
     title = models.CharField(max_length=255, verbose_name=titles_title_label)
     menu_title = models.CharField(max_length=255, blank=True,
-        verbose_name=titles_menu_label, help_text=titles_menu_help)
+                                  verbose_name=titles_menu_label,
+                                  help_text=titles_menu_help)
 
     def get_menu_title(self):
         """ utility method for django CMS api compatibility """
@@ -60,20 +65,22 @@ class Titles(models.Model):
         abstract = True
 
 
-
 class SEO(models.Model):
     """Abstract model for extending custom models with SEO fields
 
-    Attempts to maintain compatibility with django CMS, in terms of access methods,
-    but not underlying objects  (as django CMS has Title objects).
+    Attempts to maintain compatibility with django CMS, in terms of access
+    methods, but not underlying objects  (as django CMS has Title objects).
 
     """
     meta_title = models.CharField(max_length=255, blank=True, null=False,
-        verbose_name=seo_title_label, help_text=seo_title_help)
+                                  verbose_name=seo_title_label,
+                                  help_text=seo_title_help)
     meta_description = models.TextField(max_length=255, blank=True, null=False,
-        verbose_name=seo_description_label, help_text=seo_description_help)
+                                        verbose_name=seo_description_label,
+                                        help_text=seo_description_help)
     meta_keywords = models.CharField(max_length=255, blank=True, null=False,
-        verbose_name=seo_keywords_label, help_text=seo_keywords_help)
+                                     verbose_name=seo_keywords_label,
+                                     help_text=seo_keywords_help)
 
     def get_page_title(self):
         """ utility method for django CMS api compatibility """
@@ -91,18 +98,17 @@ class SEO(models.Model):
         abstract = True
 
 
-
 class Publishing(models.Model):
     """
     For when you don't need date based publishing, this abstract model
     provides the same API.
     """
-    is_published = models.BooleanField(default=False, verbose_name=quick_publish_label,
-        help_text=quick_publish_help)
+    is_published = models.BooleanField(default=False,
+                                       verbose_name=quick_publish_label,
+                                       help_text=quick_publish_help)
 
     class Meta:
         abstract = True
-
 
 
 class DatePublishing(models.Model):
@@ -111,9 +117,11 @@ class DatePublishing(models.Model):
     Has the same `is_published` attribute that `Publishing` has.
     """
     publish_on = models.DateTimeField(default=datetime.now,
-        verbose_name=publish_label, help_text=publish_help)
+                                      verbose_name=publish_label,
+                                      help_text=publish_help)
     unpublish_on = models.DateTimeField(default=None, blank=True, null=True,
-        verbose_name=unpublish_label, help_text=unpublish_help)
+                                        verbose_name=unpublish_label,
+                                        help_text=unpublish_help)
 
     @property
     def is_published(self):
@@ -134,7 +142,6 @@ class DatePublishing(models.Model):
         abstract = True
 
 
-
 class SoftDelete(models.Model):
     """ I've not actually used this yet. It's just a sketch of something I'd like.
 
@@ -145,14 +152,38 @@ class SoftDelete(models.Model):
         (None, soft_delete_initial),
         (False, soft_delete_false),
         (True, soft_delete_true)
-        )
-    soft_delete = models.NullBooleanField(default=DELETED_CHOICES[0][0],
-        choices=DELETED_CHOICES, verbose_name=soft_delete_label,
-        help_text=soft_delete_help)
+    )
+    deleted = models.NullBooleanField(default=DELETED_CHOICES[0][0],
+                                      choices=DELETED_CHOICES,
+                                      verbose_name=soft_delete_label,
+                                      help_text=soft_delete_help)
+
+    def delete(self, using=None):
+        """Instead of deleting this object, and all it's related items,
+        we hide remove it softly. This means that currently there will be a lot
+        of pseudo-orphans, because I've not yet decided on how to handle them.
+        They're just hangers-on, really.
+        """
+        assert self._get_pk_val() is not None, object_lacks_pk % {
+            'model': self._meta.object_name,
+            'pk': self._meta.pk.attname
+        }
+        self.deleted = self.DELETED_CHOICES[2][0]
+        self.save(using=using)
+    delete.alters_data = True
+
+    def restore(self, using=None):
+        for_assertions = {
+            'model': self._meta.object_name,
+            'pk': self._meta.pk.attname
+        }
+        assert self._get_pk_val() is not None, object_lacks_pk % for_assertions
+        assert self.deleted == self.DELETED_CHOICES[2][0], object_not_deleted % for_assertions
+        self.deleted = self.DELETED_CHOICES[1][0]
+        self.save(using=using)
 
     class Meta:
         abstract = True
-
 
 
 class Generic(models.Model):

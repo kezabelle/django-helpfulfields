@@ -3,6 +3,30 @@ from datetime import datetime, timedelta
 from django.db.models import Q
 from django.db.models.query import QuerySet
 
+# The querysets represented herein are designed to be used with their
+# approrpriate abstract models, and typically provide additional methods by
+# which to filter objects. The simplest way to get these yourself is to
+# create your own subclass which implements them, and wire it up to a manager.
+# .. code::
+#
+# class MyCustomQS(ChangeTrackingQuerySet, DatePublishingQuerySet, SoftDeleteQuerySet)
+#   pass
+#
+# class MyCustomerManager(Manager):
+#   def get_query_set(self):
+#       return MyCustomQS(self.model)
+
+#   def created_recently(self, minutes=30):
+#       return self.get_query_set().created_recently(minutes=minutes)
+#
+# Better than that though, is just to use `django-model-utils`
+# .. code::
+#
+# from model_utils.managers import PassThroughManager
+#
+# class MyModel(Model):
+#   objects = PassThroughManager.for_queryset_class(MyCustomQS)()
+
 
 class ChangeTrackingQuerySet(QuerySet):
     """
