@@ -62,6 +62,15 @@ changetracking_fieldset = [
 class ViewOnSite(object):
 
     def view_on_site(self, obj):
-        return 1
+        if not hasattr(obj, 'get_absolute_url'):
+            return u''
+
+        output = (u'<a href="../../r/%(content_type)d/%(pk)d/" class="'
+                  u'changelist-viewsitelink">%(text)s</a>')
+        return output % {
+            'content_type': ContentType.objects.get_for_model(obj).pk,
+            'pk': obj.pk,
+            'text': force_unicode(view_on_site_label)
+        }
     view_on_site.allow_tags = True
     view_on_site.short_description = view_on_site_label
