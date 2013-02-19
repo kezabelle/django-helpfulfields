@@ -12,9 +12,9 @@
 # serve to show the default.
 
 import sys, os
-from django.core.management import setup_environ
+from django.conf import settings
 from django.conf import global_settings as django_conf
-setup_environ(django_conf)
+settings.configure(default_settings=django_conf)
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -102,6 +102,8 @@ pygments_style = 'sphinx'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 html_theme = 'sphinxdoc'
+if os.environ.get('READTHEDOCS', None) == 'True':
+    html_theme = 'default'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
