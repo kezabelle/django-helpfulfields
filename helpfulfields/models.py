@@ -85,7 +85,7 @@ class Titles(models.Model):
                                   help_text=titles_menu_help)
 
     def get_menu_title(self):
-        """ utility method for django CMS api compatibility
+        """ utility method for `django CMS`_ api compatibility
 
         :return: the `menu_title`, or if not set, the `title`
         :rtype: unicode string
@@ -101,8 +101,8 @@ class Titles(models.Model):
 class SEO(models.Model):
     """Abstract model for extending custom models with SEO fields
 
-    Attempts to maintain compatibility with django CMS, in terms of access
-    methods, but not underlying objects  (as django CMS has Title objects).
+    Attempts to maintain compatibility with `django CMS`_, in terms of access
+    methods, but not underlying objects  (as `django CMS`_ has Title objects).
 
     :ivar meta_title: a :class:`~django.db.models.CharField` for storing the page's
                       title. Defined with a `max_length` of *255*.
@@ -114,7 +114,7 @@ class SEO(models.Model):
     :ivar meta_keywords: a :class:`~django.db.models.CharField` for storing
                          a bunch of keywords. Not used by many (any?) Search
                          engines now, but provided for historical completeness,
-                         and API compatibility with django CMS.
+                         and API compatibility with `django CMS`_.
                          Defined with a `max_length` of *255*.
     """
     meta_title = models.CharField(max_length=255, blank=True, null=False,
@@ -128,7 +128,7 @@ class SEO(models.Model):
                                      help_text=seo_keywords_help)
 
     def get_page_title(self):
-        """ utility method for django CMS api compatibility
+        """ utility method for `django CMS`_ api compatibility
 
         :return: the `meta_title` field's value
         :rtype: unicode string
@@ -136,7 +136,7 @@ class SEO(models.Model):
         return self.meta_title
 
     def get_meta_description(self):
-        """ utility method for django CMS api compatibility
+        """ utility method for `django CMS`_ api compatibility
 
         :return: the `meta_description` field's value
         :rtype: unicode string
@@ -144,7 +144,7 @@ class SEO(models.Model):
         return self.meta_description
 
     def get_meta_keywords(self):
-        """ utility method for django CMS api compatibility
+        """ utility method for `django CMS`_ api compatibility
 
         :return: the `meta_description` field's value
         :rtype: unicode string
