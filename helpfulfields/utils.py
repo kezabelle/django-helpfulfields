@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def datediff(original, minutes=30):
@@ -13,7 +13,6 @@ def datediff(original, minutes=30):
     """
     if not original:
         return False
-    timediff = datetime.now() - original
-    compare_to = 60 * minutes
-    diff = timediff.seconds / 60
-    return diff < compare_to
+    to_compare = datetime.now() - original
+    recently = datetime.now() - timedelta(minutes=minutes)
+    return to_compare > recently
