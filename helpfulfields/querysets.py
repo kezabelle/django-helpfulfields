@@ -30,8 +30,9 @@ from django.db.models.query import QuerySet
 
 class ChangeTrackingQuerySet(QuerySet):
     """
-    A custom queryset for filtering things using the `Publishing` Abstract model
-    via it's boolean.
+    A custom queryset for filtering models using the :class:`ChangeTracking`
+    model.
+
     Recommended to be used by mixing together querysets and using
     `django-model-utils` to make a Passthrough manager.
     """
@@ -40,7 +41,7 @@ class ChangeTrackingQuerySet(QuerySet):
         object instances created within the last N minutes.
 
         :return: filtered objects
-        :rtype: :class:QuerySet
+        :rtype: :class:`~django.db.models.query.QuerySet` subclass
         """
         recently = datetime.now() - timedelta(minutes=minutes)
         return self.filter(created__gte=recently)
@@ -50,7 +51,7 @@ class ChangeTrackingQuerySet(QuerySet):
         object instances modified within the last N minutes.
 
         :return: filtered objects
-        :rtype: :class:QuerySet
+        :rtype: :class:`~django.db.models.query.QuerySet` subclass
         """
         recently = datetime.now() - timedelta(minutes=minutes)
         return self.filter(modified__gte=recently)
@@ -58,22 +59,36 @@ class ChangeTrackingQuerySet(QuerySet):
 
 class PublishingQuerySet(QuerySet):
     """
-    A custom queryset for filtering things using the `Publishing` Abstract model
-    via it's boolean.
+    A custom queryset for filtering things using the :class:`Publishing`
+    abstract model via it's boolean.
+
     Recommended to be used by mixing together querysets and using
     `django-model-utils` to make a Passthrough manager.
     """
     def published(self):
+        """
+        Find all objects who have have `is_published` set to *True*.
+
+        :return: All published objects
+        :rtype: :class:`~django.db.models.query.QuerySet` subclass
+        """
         return self.filter(is_published=True)
 
     def unpublished(self):
+        """
+        Find all objects who have have `is_published` set to *False*.
+
+        :return: All published objects
+        :rtype: :class:`~django.db.models.query.QuerySet` subclass
+        """
         return self.filter(is_published=False)
 
 
 class DatePublishingQuerySet(QuerySet):
     """
-    A custom queryset for filtering things using the `Publishing` Abstract model
-    via it's boolean.
+    A custom queryset for filtering things using the :class:`DatePublishing`
+    abtract model via the new fields it provides.
+
     Recommended to be used by mixing together querysets and using
     `django-model-utils` to make a Passthrough manager.
     """
@@ -81,8 +96,9 @@ class DatePublishingQuerySet(QuerySet):
         """
         Find all objects who have an end publishing date in the future, or no
         end date, and ALSO have a publish date in the past or present.
+
         :return: All published objects
-        :rtype: :class:QuerySet subclass
+        :rtype: :class:`~django.db.models.query.QuerySet` subclass
         """
         now = datetime.now()
         maybe_published = Q(unpublish_on__gte=now) | Q(unpublish_on__isnull=True)
@@ -93,8 +109,9 @@ class DatePublishingQuerySet(QuerySet):
         """
         Find all objects who have an end publishing date in the past, OR a start
         date in the future.
+
         :return: All unpublished objects
-        :rtype: :class:QuerySet subclass
+        :rtype: :class:`~django.db.models.query.QuerySet` subclass
         """
         now = datetime.now()
         return self.filter(Q(unpublish_on__lte=now) | Q(publish_on__gte=now))
@@ -102,15 +119,15 @@ class DatePublishingQuerySet(QuerySet):
 
 class SoftDeleteQuerySet(QuerySet):
     """
-    A custom queryset which goes hand in hand with the `SoftDelete` model to
-    provide a way to filter by the additional field that creates.
+    A custom queryset which goes hand in hand with the :class:`SoftDelete` model
+    to provide a way to filter by the additional field that creates.
     """
-
     def all(self):
         """ Finds all objects which haven't been marked as deleted. This
         includes those which have been restored previously.
+
         :return: objects which haven't been marked as deleted
-        :rtype: :class:QuerySet
+        :rtype: :class:`~django.db.models.query.QuerySet` subclass
         """
         restored_val = self.model.DELETED_CHOICES[1][0]
         return super(SoftDeleteQuerySet, self).all().filter(
@@ -119,8 +136,9 @@ class SoftDeleteQuerySet(QuerySet):
 
     def deleted(self):
         """ filters the queryset looking for deleted items only.
+
         :return: objects which are currently deleted
-        :rtype: :class:QuerySet
+        :rtype: :class:`~django.db.models.query.QuerySet` subclass
         """
         deleted_val = self.model.DELETED_CHOICES[2][0]
         return self.filter(deleted=deleted_val)
@@ -128,10 +146,10 @@ class SoftDeleteQuerySet(QuerySet):
     def restored(self):
         """ filters the queryset looking for objects which have been previously
         deleted, and since restored.
+
         :return: objects which were once deleted.
-        :rtype: :class:QuerySet
+        :rtype: :class:`~django.db.models.query.QuerySet` subclass
         """
         restored_val = self.model.DELETED_CHOICES[1][0]
         return self.filter(deleted=restored_val)
-
 

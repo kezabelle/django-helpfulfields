@@ -24,9 +24,17 @@ class ChangeTracking(models.Model):
     changed. By extension, allows us to use get_latest_by to establish the most
     recent things.
 
+    :ivar created: a :mod:`datetime.datetime` representing the original date this
+                   object was saved. Represented as a
+                   :class:`~django.db.models.DateTimeField`.
+
+    :ivar modified: a :mod:`datetime.datetime` representing the last time this
+                    object was changed. Represented as a
+                    :class:`~django.db.models.DateTimeField`.
+
     .. note::
         It transpires that this is basically an accidental rewrite of
-        `django-model-utils` :class:TimeStampedModel, though it provides a few
+        `django-model-utils`_ TimeStampedModel, though it provides a few
         extra bits.
     """
     created = models.DateTimeField(auto_now_add=True, verbose_name=created_label,
@@ -35,9 +43,23 @@ class ChangeTracking(models.Model):
                                     help_text=modified_help)
 
     def created_recently(self, minutes=30):
+        """
+        Was this object created recently?
+
+        :param minutes: the time difference which should be considered recent.
+        :return: whether or not this object was recently created
+        :rtype: boolean
+        """
         return datediff(self.modified, minutes=minutes)
 
     def modified_recently(self, minutes=30):
+        """
+        Was this object changed recently?
+
+        :param minutes: the time difference which should be considered recent.
+        :return: whether or not this object was recently changed.
+        :rtype: boolean
+        """
         return datediff(self.modified, minutes=minutes)
 
     class Meta:
@@ -49,6 +71,13 @@ class Titles(models.Model):
 
     Also supplies a get_menu_title method, which falls back to the title if no
     menu title is set.
+
+    :ivar title: Required :class:`~django.db.models.CharField` for an object,
+                 whose `max_length` is *255*.
+
+    :ivar title: Optional :class:`~django.db.models.CharField` for an object,
+                 whose `max_length` is *255*, and may be used to represent this
+                 object in menus.
     """
     title = models.CharField(max_length=255, verbose_name=titles_title_label)
     menu_title = models.CharField(max_length=255, blank=True,
@@ -56,7 +85,11 @@ class Titles(models.Model):
                                   help_text=titles_menu_help)
 
     def get_menu_title(self):
-        """ utility method for django CMS api compatibility """
+        """ utility method for django CMS api compatibility
+
+        :return: the `menu_title`, or if not set, the `title`
+        :rtype: unicode string
+        """
         if self.menu_title:
             return self.menu_title
         return self.title
@@ -71,6 +104,18 @@ class SEO(models.Model):
     Attempts to maintain compatibility with django CMS, in terms of access
     methods, but not underlying objects  (as django CMS has Title objects).
 
+    :ivar meta_title: a :class:`~django.db.models.CharField` for storing the page's
+                      title. Defined with a `max_length` of *255*.
+
+    :ivar meta_description: a :class:`~django.db.models.CharField` for storing the
+                            description sometimes used in Search Engines.
+                            Defined with a `max_length` of *255*.
+
+    :ivar meta_keywords: a :class:`~django.db.models.CharField` for storing
+                         a bunch of keywords. Not used by many (any?) Search
+                         engines now, but provided for historical completeness,
+                         and API compatibility with django CMS.
+                         Defined with a `max_length` of *255*.
     """
     meta_title = models.CharField(max_length=255, blank=True, null=False,
                                   verbose_name=seo_title_label,
@@ -83,15 +128,27 @@ class SEO(models.Model):
                                      help_text=seo_keywords_help)
 
     def get_page_title(self):
-        """ utility method for django CMS api compatibility """
+        """ utility method for django CMS api compatibility
+
+        :return: the `meta_title` field's value
+        :rtype: unicode string
+        """
         return self.meta_title
 
     def get_meta_description(self):
-        """ utility method for django CMS api compatibility """
+        """ utility method for django CMS api compatibility
+
+        :return: the `meta_description` field's value
+        :rtype: unicode string
+        """
         return self.meta_description
 
     def get_meta_keywords(self):
-        """ utility method for django CMS api compatibility """
+        """ utility method for django CMS api compatibility
+
+        :return: the `meta_description` field's value
+        :rtype: unicode string
+        """
         return self.meta_keywords
 
     class Meta:
@@ -100,8 +157,15 @@ class SEO(models.Model):
 
 class Publishing(models.Model):
     """
-    For when you don't need date based publishing, this abstract model
-    provides the same API.
+    For when you don't need date based publishing (using :class:`DatePublishing`)
+    this abstract model provides the same API.
+
+    For better results, this should be combined with
+    :class:`~helpfulfields.querysets.PublishingQuerySet`.
+
+    :ivar is_published: :class:`~django.db.models.BooleanField` deciding whether
+                        or not the object is available on the site. Defaults
+                        to `False`.
     """
     is_published = models.BooleanField(default=False,
                                        verbose_name=quick_publish_label,
@@ -114,7 +178,17 @@ class Publishing(models.Model):
 class DatePublishing(models.Model):
     """ A perennial favourite, publish start and end dates, as an abstract model.
 
-    Has the same `is_published` attribute that `Publishing` has.
+    Has the same `is_published` attribute that :class:`Publishing` has.
+
+    For querying, this should be combined with
+    :class:`~helpfulfields.querysets.DatePublishingQuerySet`.
+
+    :ivar publish_on: Defaults to :py:mod:`datetime.datetime.now()` - the date
+                      on which this should be available on the site. Represented
+                      as a :class:`~django.db.models.DateTimeField`.
+
+    :ivar unpublish_on: the date on which this should expire from the site.
+                        Represented as a :class:`~django.db.models.DateTimeField`.
     """
     publish_on = models.DateTimeField(default=datetime.now,
                                       verbose_name=publish_label,
@@ -126,17 +200,19 @@ class DatePublishing(models.Model):
     @property
     def is_published(self):
         """
-        Method which behaves as a property, for API stability with `Publishing`
+        For API compatibility with the alternate publishing model
+        :class:`Publishing` which uses a boolean property, this method is
+        accessed the same way, and is decorated with `@property` for this reason.
 
         :return: Whether or not this object is currently visible
         :rtype: boolean
         """
         now = datetime.now()
         if self.unpublish_on is not None:
+            # maybe self.unpublish_on >= now >= self.publish_on ???
             return self.unpublish_on >= now and self.publish_on <= now
         else:
             return self.publish_on <= now
-        return False
 
     class Meta:
         abstract = True
@@ -147,6 +223,7 @@ class SoftDelete(models.Model):
 
     The idea is that nothing should ever really be deleted, but I have no idea
     how feasible this is at an abstract level.
+
     """
     DELETED_CHOICES = (
         (None, soft_delete_initial),
@@ -159,10 +236,14 @@ class SoftDelete(models.Model):
                                       help_text=soft_delete_help)
 
     def delete(self, using=None):
-        """Instead of deleting this object, and all it's related items,
+        """
+        Instead of deleting this object, and all it's related items,
         we hide remove it softly. This means that currently there will be a lot
         of pseudo-orphans, because I've not yet decided on how to handle them.
         They're just hangers-on, really.
+
+        :param using: the db router to use.
+        :rtype: None
         """
         assert self._get_pk_val() is not None, object_lacks_pk % {
             'model': self._meta.object_name,
@@ -173,6 +254,13 @@ class SoftDelete(models.Model):
     delete.alters_data = True
 
     def restore(self, using=None):
+        """
+        Converts a previously deleted object to it's restored state, by switching
+        the value in the boolean to False (as opposed to NULL for never-deleted)
+
+        :param using: the db router to use.
+        :rtype: None
+        """
         for_assertions = {
             'model': self._meta.object_name,
             'pk': self._meta.pk.attname
