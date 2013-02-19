@@ -19,7 +19,7 @@ from django.db.models.query import QuerySet
 #   def created_recently(self, minutes=30):
 #       return self.get_query_set().created_recently(minutes=minutes)
 #
-# Better than that though, is just to use `django-model-utils`
+# Better than that though, is just to use `django-model-utils`_
 # .. code::
 #
 # from model_utils.managers import PassThroughManager
@@ -34,7 +34,7 @@ class ChangeTrackingQuerySet(QuerySet):
     model.
 
     Recommended to be used by mixing together querysets and using
-    `django-model-utils` to make a Passthrough manager.
+    `django-model-utils`_ to make a PassThrough manager.
     """
     def created_recently(self, minutes=30):
         """Goes hand in hand with the `created_recently` method. Finds all
@@ -63,7 +63,7 @@ class PublishingQuerySet(QuerySet):
     abstract model via it's boolean.
 
     Recommended to be used by mixing together querysets and using
-    `django-model-utils` to make a Passthrough manager.
+    `django-model-utils`_ to make a PassThrough manager.
     """
     def published(self):
         """
@@ -90,7 +90,7 @@ class DatePublishingQuerySet(QuerySet):
     abtract model via the new fields it provides.
 
     Recommended to be used by mixing together querysets and using
-    `django-model-utils` to make a Passthrough manager.
+    `django-model-utils`_ to make a PassThrough manager.
     """
     def published(self):
         """
