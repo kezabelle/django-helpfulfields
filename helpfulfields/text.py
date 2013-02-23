@@ -18,7 +18,7 @@ titles_title_label = _(u'title')
 #: :class:`~helpfulfields.models.Titles`
 titles_menu_label = _(u'menu title')
 
-#: the `help_text` for the
+#: the :attr:`~django.db.models.Field.help_text` for the
 #: :attr:`~helpfulfields.models.Titles.menu_title` field on
 #: :class:`~helpfulfields.models.Titles`
 titles_menu_help = _(u'may be displayed in menus, instead of the standard title')
@@ -28,7 +28,7 @@ titles_menu_help = _(u'may be displayed in menus, instead of the standard title'
 #: :class:`~helpfulfields.models.SEO`
 seo_title_label = _(u'page title')
 
-#: the `help_text` for the
+#: the :attr:`~django.db.models.Field.help_text` for the
 #: :attr:`~helpfulfields.models.SEO.meta_title` field on
 #: :class:`~helpfulfields.models.SEO`
 seo_title_help = _(u'displayed by the web browser in the window/tab/taskbar.')
@@ -38,7 +38,7 @@ seo_title_help = _(u'displayed by the web browser in the window/tab/taskbar.')
 #: :class:`~helpfulfields.models.SEO`
 seo_description_label = _(u'page description')
 
-#: the `help_text` for the
+#: the :attr:`~django.db.models.Field.help_text` for the
 #: :attr:`~helpfulfields.models.SEO.meta_description` field on
 #: :class:`~helpfulfields.models.SEO`
 seo_description_help = _(u'may be displayed by search engines in results.')
@@ -48,7 +48,7 @@ seo_description_help = _(u'may be displayed by search engines in results.')
 #: :class:`~helpfulfields.models.SEO`
 seo_keywords_label = _(u'page keywords')
 
-#: the `help_text` for the
+#: the :attr:`~django.db.models.Field.help_text` for the
 #: :attr:`~helpfulfields.models.SEO.meta_keywords` field on
 #: :class:`~helpfulfields.models.SEO`
 seo_keywords_help = _(u'may be used by search engines to flag you as spamming.')
@@ -62,8 +62,9 @@ seo_fieldset_label = _(u'search engine optimisation')
 #: field on :class:`~helpfulfields.models.SoftDelete`
 soft_delete_label = _(u'deleted?')
 
-#: the `help_text` for the :attr:`~helpfulfields.models.SoftDelete.deleted`
-#: field on :class:`~helpfulfields.models.SoftDelete`
+#: the :attr:`~django.db.models.Field.help_text` for the
+#: :attr:`~helpfulfields.models.SoftDelete.deleted` field
+#: on :class:`~helpfulfields.models.SoftDelete`
 soft_delete_help = _(u'has this been removed from the website?')
 
 #: the initial state text for the
@@ -90,8 +91,9 @@ changetracking_fieldset_label = _(u'changes')
 #: :class:`~helpfulfields.models.ChangeTracking`
 created_label = _(u'created')
 
-#: the `help_text` for the :attr:`~helpfulfields.models.ChangeTracking.created`
-#: field on :class:`~helpfulfields.models.ChangeTracking`
+#: the :attr:`~django.db.models.Field.help_text` for the
+#: :attr:`~helpfulfields.models.ChangeTracking.created` field
+#: on :class:`~helpfulfields.models.ChangeTracking`
 created_help = _(u'the date and time on which this object was first added')
 
 #: :attr:`~django.db.models.Field.verbose_name`/:attr:`~django.forms.Field.label`
@@ -99,7 +101,7 @@ created_help = _(u'the date and time on which this object was first added')
 #: :class:`~helpfulfields.models.ChangeTracking`
 modified_label = _(u'last modified')
 
-#: the `help_text` for the
+#: the :attr:`~django.db.models.Field.help_text` for the
 #: :attr:`~helpfulfields.models.ChangeTracking.modified` field on
 #: :class:`~helpfulfields.models.ChangeTracking`
 modified_help = _(u'the date and time on which this object was last changed')
@@ -113,7 +115,7 @@ dates_fieldset_label = _(u'publishing info')
 #: :class:`~helpfulfields.models.Publishing`
 quick_publish_label = _(u'is published')
 
-#: the `help_text` for the
+#: the :attr:`~django.db.models.Field.help_text` for the
 #: :attr:`~helpfulfields.models.Publishing.is_published` field on
 #: :class:`~helpfulfields.models.Publishing`
 quick_publish_help = _(u'should this object be visible on the website')
@@ -123,7 +125,7 @@ quick_publish_help = _(u'should this object be visible on the website')
 #: :class:`~helpfulfields.models.DatePublishing`
 publish_label = _(u'publishing date')
 
-#: the `help_text` for the
+#: the :attr:`~django.db.models.Field.help_text` for the
 #: :attr:`~helpfulfields.models.DatePublishing.publish_on` field on
 #: :class:`~helpfulfields.models.DatePublishing`
 publish_help = _(u'the date and time on which this object should be visible on '
@@ -134,7 +136,7 @@ publish_help = _(u'the date and time on which this object should be visible on '
 #: :class:`~helpfulfields.models.DatePublishing`
 unpublish_label = _(u'publishing end date')
 
-#: the `help_text` for the
+#: the :attr:`~django.db.models.Field.help_text` for the
 #: :attr:`~helpfulfields.models.DatePublishing.unpublish_on` field on
 #: :class:`~helpfulfields.models.DatePublishing`
 unpublish_help = _(u'if filled in, this date and time are when this object '
