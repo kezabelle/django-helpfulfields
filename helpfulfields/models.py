@@ -24,21 +24,21 @@ class ChangeTracking(models.Model):
     changed. By extension, allows us to use get_latest_by to establish the most
     recent things.
 
-    :ivar created: a :mod:`datetime.datetime` representing the original date this
-                   object was saved. Represented as a
-                   :class:`~django.db.models.DateTimeField`.
-
-    :ivar modified: a :mod:`datetime.datetime` representing the last time this
-                    object was changed. Represented as a
-                    :class:`~django.db.models.DateTimeField`.
-
     .. note::
         It transpires that this is basically an accidental rewrite of
         `django-model-utils`_ TimeStampedModel, though it provides a few
         extra bits.
     """
+
+    #: a :mod:`datetime.datetime` representing the original date this
+    #: object was saved. Represented as a
+    #: :class:`~django.db.models.DateTimeField`.
     created = models.DateTimeField(auto_now_add=True, verbose_name=created_label,
                                    help_text=created_help)
+
+    #: a :mod:`datetime.datetime` representing the last time this
+    #: object was changed. Represented as a
+    #: :class:`~django.db.models.DateTimeField`.
     modified = models.DateTimeField(auto_now=True, verbose_name=modified_label,
                                     help_text=modified_help)
 
@@ -87,15 +87,15 @@ class Titles(models.Model):
 
     Also supplies a get_menu_title method, which falls back to the title if no
     menu title is set.
-
-    :ivar title: Required :class:`~django.db.models.CharField` for an object,
-                 whose `max_length` is *255*.
-
-    :ivar title: Optional :class:`~django.db.models.CharField` for an object,
-                 whose `max_length` is *255*, and may be used to represent this
-                 object in menus.
     """
+
+    #: Required :class:`~django.db.models.CharField` for an object,
+    #: whose `max_length` is *255*.
     title = models.CharField(max_length=255, verbose_name=titles_title_label)
+
+    #: Optional :class:`~django.db.models.CharField` for an object,
+    #: whose `max_length` is *255*, and may be used to represent this
+    #: object in menus.
     menu_title = models.CharField(max_length=255, blank=True,
                                   verbose_name=titles_menu_label,
                                   help_text=titles_menu_help)
@@ -119,26 +119,24 @@ class SEO(models.Model):
 
     Attempts to maintain compatibility with `django CMS`_, in terms of access
     methods, but not underlying objects  (as `django CMS`_ has Title objects).
-
-    :ivar meta_title: a :class:`~django.db.models.CharField` for storing the page's
-                      title. Defined with a `max_length` of *255*.
-
-    :ivar meta_description: a :class:`~django.db.models.CharField` for storing the
-                            description sometimes used in Search Engines.
-                            Defined with a `max_length` of *255*.
-
-    :ivar meta_keywords: a :class:`~django.db.models.CharField` for storing
-                         a bunch of keywords. Not used by many (any?) Search
-                         engines now, but provided for historical completeness,
-                         and API compatibility with `django CMS`_.
-                         Defined with a `max_length` of *255*.
     """
+
+    #: a :class:`~django.db.models.CharField` for storing the page's
+    #: title. Defined with a `max_length` of *255*.
     meta_title = models.CharField(max_length=255, blank=True, null=False,
                                   verbose_name=seo_title_label,
                                   help_text=seo_title_help)
+
+    #: a :class:`~django.db.models.CharField` for storing the description
+    #: sometimes used in Search Engines. Defined with a `max_length` of *255*.
     meta_description = models.TextField(max_length=255, blank=True, null=False,
                                         verbose_name=seo_description_label,
                                         help_text=seo_description_help)
+
+    #: a :class:`~django.db.models.CharField` for storing a bunch of keywords.
+    #: Not used by many (any?) Search engines now, but provided for historical
+    #: completeness, and API compatibility with `django CMS`_. Defined with a
+    #: `max_length` of *255*.
     meta_keywords = models.CharField(max_length=255, blank=True, null=False,
                                      verbose_name=seo_keywords_label,
                                      help_text=seo_keywords_help)
@@ -178,11 +176,10 @@ class Publishing(models.Model):
 
     For better results, this should be combined with
     :class:`~helpfulfields.querysets.PublishingQuerySet`.
-
-    :ivar is_published: :class:`~django.db.models.BooleanField` deciding whether
-                        or not the object is available on the site. Defaults
-                        to `False`.
     """
+
+    #: :class:`~django.db.models.BooleanField` deciding whether or not the
+    #: object is available on the site. Defaults to `False`.
     is_published = models.BooleanField(default=False,
                                        verbose_name=quick_publish_label,
                                        help_text=quick_publish_help)
@@ -198,17 +195,17 @@ class DatePublishing(models.Model):
 
     For querying, this should be combined with
     :class:`~helpfulfields.querysets.DatePublishingQuerySet`.
-
-    :ivar publish_on: Defaults to :py:mod:`datetime.datetime.now()` - the date
-                      on which this should be available on the site. Represented
-                      as a :class:`~django.db.models.DateTimeField`.
-
-    :ivar unpublish_on: the date on which this should expire from the site.
-                        Represented as a :class:`~django.db.models.DateTimeField`.
     """
+
+    #: Defaults to :py:mod:`datetime.datetime.now()` - the date on which this
+    #: should be available on the site. Represented as a
+    #: :class:`~django.db.models.DateTimeField`.
     publish_on = models.DateTimeField(default=datetime.now,
                                       verbose_name=publish_label,
                                       help_text=publish_help)
+
+    #: the date on which this should expire from the site. Represented as
+    #: a :class:`~django.db.models.DateTimeField`.
     unpublish_on = models.DateTimeField(default=None, blank=True, null=True,
                                         verbose_name=unpublish_label,
                                         help_text=unpublish_help)
@@ -239,7 +236,6 @@ class SoftDelete(models.Model):
 
     The idea is that nothing should ever really be deleted, but I have no idea
     how feasible this is at an abstract level.
-
     """
     DELETED_CHOICES = (
         (None, soft_delete_initial),
