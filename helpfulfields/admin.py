@@ -1,15 +1,21 @@
 # -*- coding: utf-8 -*-
+from collections import defaultdict
 from datetime import datetime, timedelta
 import logging
+from operator import itemgetter
 from django.conf import settings
+from django.contrib.admin.models import LogEntry
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse, NoReverseMatch
+from django.template import Template, Context
+from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
 from django.utils.html import escape
 from django.utils.translation import string_concat
 from helpfulfields.text import (seo_fieldset_label, changetracking_fieldset_label,
                                 dates_fieldset_label, view_on_site_label,
-                                object_not_mounted)
+                                object_not_mounted, logentry_label,
+                                logentry_empty)
 
 logger = logging.getLogger(__name__)
 
@@ -348,3 +354,76 @@ class RelationList(object):
 
         # more_link may be empty ...
         return string_concat(items, more_link)
+
+
+class LogEntrySparklines(object):
+    def __init__(self, days=14, label=logentry_label):
+        self.short_description = label
+        self.days = days
+        self.allow_tags = True
+
+    def __call__(self, obj):
+        ct = ContentType.objects.get_for_model(obj)
+        now = datetime.now()
+        back_to = now - timedelta(days=self.days)
+
+        # get all entries for this object in the last N days.
+        entries = (LogEntry.objects
+                   .filter(content_type=ct, object_id=obj.pk)
+                   .filter(action_time__gte=back_to)
+                   .order_by('-action_time'))
+
+        # generate the initial list of items.
+        days_with_counts = {}
+        for day_distance in range(0, self.days):
+            new_datetime = now - timedelta(days=day_distance)
+            days_with_counts[new_datetime.date()] = 0
+
+        # populate the existing dates with change counts.
+        for entry in entries:
+            days_with_counts[entry.action_time.date()] += 1
+
+        maximum = max(days_with_counts.values()) #: 100%!
+        if maximum < 1:
+            return logentry_empty
+
+        days_with_css_vals = {}
+        for key, val in days_with_counts.items():
+            val_as_percentage = val / maximum
+            days_with_css_vals[key] = val_as_percentage
+
+        results = sorted(days_with_css_vals.items(), key=itemgetter(0))
+
+        ctx = Context({
+            'sparks': results,
+            'sparkbar_css': self.sparkline_bar_css(),
+            'sparkline_css': self.sparkline_graph_css()
+        })
+        return self.sparkline_template().render(ctx)
+
+    def sparkline_bar_css(self):
+        css = {
+            'width': '0.3em',
+            'margin': '0 0.05em',
+            'display': 'inline-block',
+            'background-color': '#7CA0C7',
+            'vertical-align': 'baseline',
+        }
+        return ''.join(['%s:%s;' % rule_val for rule_val in css.items()])
+
+    def sparkline_graph_css(self):
+        css = {
+            'height': '1em',
+            'border-bottom': '1px dotted #5b80b2',
+            'overflow': 'hidden',
+        }
+        return ''.join(['%s:%s;' % rule_val for rule_val in css.items()])
+
+    def sparkline_template(self):
+        return Template('''
+        <div class="changelist-sparkline" style="{{ sparkline_css }}">
+        {% for date, spark in sparks %}
+            <div class="changelist-sparkline-bar" style="height:{{ spark }}em;{{ sparkbar_css }}"></div>
+        {% endfor %}
+        </div>
+        ''')
