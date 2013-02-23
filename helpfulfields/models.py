@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -15,7 +15,6 @@ from helpfulfields.text import (seo_title_label, seo_title_help,
                                 quick_publish_help, object_lacks_pk,
                                 object_not_deleted, created_label, created_help,
                                 modified_label, modified_help)
-from helpfulfields.utils import datediff
 
 
 class ChangeTracking(models.Model):
@@ -42,25 +41,41 @@ class ChangeTracking(models.Model):
     modified = models.DateTimeField(auto_now=True, verbose_name=modified_label,
                                     help_text=modified_help)
 
-    def created_recently(self, minutes=30):
+    def created_recently(self, **kwargs):
         """
         Was this object created recently?
+        Accepts a list of `kwargs` which are passed directly to
+        :func:`~datetime.timedelta`; in the absence of any `kwargs` the timedelta
+        is told 30 minutes is recent.
 
-        :param minutes: the time difference which should be considered recent.
         :return: whether or not this object was recently created
         :rtype: boolean
         """
-        return datediff(self.modified, minutes=minutes)
+        # Default to 30 minutes, as per previous implementation.
+        if len(kwargs.keys()) == 0:
+            kwargs.update(minutes=30)
+        if not self.created:
+            return False
+        recently = datetime.now() - timedelta(**kwargs)
+        return self.created >= recently
 
-    def modified_recently(self, minutes=30):
+    def modified_recently(self, **kwargs):
         """
         Was this object changed recently?
+        Accepts a list of `kwargs` which are passed directly to
+        :func:`~datetime.timedelta`; in the absence of any `kwargs` the timedelta
+        is told 30 minutes is recent.
 
-        :param minutes: the time difference which should be considered recent.
         :return: whether or not this object was recently changed.
         :rtype: boolean
         """
-        return datediff(self.modified, minutes=minutes)
+        # Default to 30 minutes, as per previous implementation.
+        if len(kwargs.keys()) == 0:
+            kwargs.update(minutes=30)
+        if not self.modified:
+            return False
+        recently = datetime.now() - timedelta(minutes=30)
+        return self.modified >= recently
 
     class Meta:
         abstract = True

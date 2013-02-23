@@ -36,24 +36,38 @@ class ChangeTrackingQuerySet(QuerySet):
     Recommended to be used by mixing together querysets and using
     `django-model-utils`_ to make a PassThrough manager.
     """
-    def created_recently(self, minutes=30):
+    def created_recently(self, **kwargs):
         """Goes hand in hand with the `created_recently` method. Finds all
         object instances created within the last N minutes.
 
+        Accepts a list of `kwargs` which are passed directly to
+        :func:`~datetime.timedelta`; in the absence of any `kwargs` the timedelta
+        is told 30 minutes is recent.
+
         :return: filtered objects
         :rtype: :class:`~django.db.models.query.QuerySet` subclass
         """
-        recently = datetime.now() - timedelta(minutes=minutes)
+        # Default to 30 minutes, as per previous implementation.
+        if len(kwargs.keys()) == 0:
+            kwargs.update(minutes=30)
+        recently = datetime.now() - timedelta(**kwargs)
         return self.filter(created__gte=recently)
 
-    def modified_recently(self, minutes=30):
+    def modified_recently(self, **kwargs):
         """Goes hand in hand with the `modified_recently` method. Finds all
         object instances modified within the last N minutes.
 
+        Accepts a list of `kwargs` which are passed directly to
+        :func:`~datetime.timedelta`; in the absence of any `kwargs` the timedelta
+        is told 30 minutes is recent.
+
         :return: filtered objects
         :rtype: :class:`~django.db.models.query.QuerySet` subclass
         """
-        recently = datetime.now() - timedelta(minutes=minutes)
+        # Default to 30 minutes, as per previous implementation.
+        if len(kwargs.keys()) == 0:
+            kwargs.update(minutes=30)
+        recently = datetime.now() - timedelta(**kwargs)
         return self.filter(modified__gte=recently)
 
 
@@ -152,4 +166,3 @@ class SoftDeleteQuerySet(QuerySet):
         """
         restored_val = self.model.DELETED_CHOICES[1][0]
         return self.filter(deleted=restored_val)
-
