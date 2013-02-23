@@ -352,6 +352,30 @@ class LogEntrySparkline(object):
         on this class, rather than via a template which we might
         :func:`~django.template.loader.render_to_string`. This may yet be a
         mistake, so the API methods should be considered private.
+
+    An example of the output is provided below, though it may render slightly
+    differently due to font-sizing differences between this documentation and
+    the standard `Django`_ :class:`~django.contrib.admin.AdminSite`:
+
+    .. raw:: html
+
+        <div class="changelist-sparkline" style="overflow:hidden;border-bottom:1px dotted #5b80b2;height:1em; display:inline-block;">
+            <div class="changelist-sparkline-bar" style="height:0.3em;width:0.3em;vertical-align:baseline;margin:0 0.05em;display:inline-block;background-color:#7CA0C7;"></div>
+            <div class="changelist-sparkline-bar" style="height:0.5em;width:0.3em;vertical-align:baseline;margin:0 0.05em;display:inline-block;background-color:#7CA0C7;"></div>
+            <div class="changelist-sparkline-bar" style="height:0.6em;width:0.3em;vertical-align:baseline;margin:0 0.05em;display:inline-block;background-color:#7CA0C7;"></div>
+            <div class="changelist-sparkline-bar" style="height:1em;width:0.3em;vertical-align:baseline;margin:0 0.05em;display:inline-block;background-color:#7CA0C7;"></div>
+            <div class="changelist-sparkline-bar" style="height:1em;width:0.3em;vertical-align:baseline;margin:0 0.05em;display:inline-block;background-color:#7CA0C7;"></div>
+            <div class="changelist-sparkline-bar" style="height:0.8em;width:0.3em;vertical-align:baseline;margin:0 0.05em;display:inline-block;background-color:#7CA0C7;"></div>
+            <div class="changelist-sparkline-bar" style="height:0.1em;width:0.3em;vertical-align:baseline;margin:0 0.05em;display:inline-block;background-color:#7CA0C7;"></div>
+            <div class="changelist-sparkline-bar" style="height:0em;width:0.3em;vertical-align:baseline;margin:0 0.05em;display:inline-block;background-color:#7CA0C7;"></div>
+            <div class="changelist-sparkline-bar" style="height:0.2em;width:0.3em;vertical-align:baseline;margin:0 0.05em;display:inline-block;background-color:#7CA0C7;"></div>
+            <div class="changelist-sparkline-bar" style="height:0.35em;width:0.3em;vertical-align:baseline;margin:0 0.05em;display:inline-block;background-color:#7CA0C7;"></div>
+            <div class="changelist-sparkline-bar" style="height:0.6em;width:0.3em;vertical-align:baseline;margin:0 0.05em;display:inline-block;background-color:#7CA0C7;"></div>
+            <div class="changelist-sparkline-bar" style="height:0.75em;width:0.3em;vertical-align:baseline;margin:0 0.05em;display:inline-block;background-color:#7CA0C7;"></div>
+            <div class="changelist-sparkline-bar" style="height:1em;width:0.3em;vertical-align:baseline;margin:0 0.05em;display:inline-block;background-color:#7CA0C7;"></div>
+            <div class="changelist-sparkline-bar" style="height:0.3em;width:0.3em;vertical-align:baseline;margin:0 0.05em;display:inline-block;background-color:#7CA0C7;"></div>
+        </div>
+
     """
     def __init__(self, days=14, label=logentry_label):
         """
