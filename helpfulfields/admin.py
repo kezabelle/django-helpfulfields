@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from collections import defaultdict
 from datetime import datetime, timedelta
 import logging
 from operator import itemgetter
@@ -8,10 +7,10 @@ from django.contrib.admin.models import LogEntry
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.template import Template, Context
-from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
 from django.utils.html import escape
 from django.utils.translation import string_concat
+from helpfulfields.settings import MAX_NUM_RELATIONS
 from helpfulfields.text import (seo_fieldset_label, changetracking_fieldset_label,
                                 dates_fieldset_label, view_on_site_label,
                                 object_not_mounted, logentry_label,
@@ -256,8 +255,8 @@ class RelationList(object):
     .. _into the public domain: http://django-irc-logs.com/2013/feb/20/#934823
     .. _in a paste: http://bpaste.net/show/9aU2f5BuO7f4prUnayWJ/
     """
-    def __init__(self, accessor, label, max_num=3, more_separator=None,
-                 admin_site='admin'):
+    def __init__(self, accessor, label, max_num=MAX_NUM_RELATIONS,
+                 more_separator=None, admin_site='admin'):
         """
         :param accessor: The attribute to look for on each ``obj``
                               (Model instance)
