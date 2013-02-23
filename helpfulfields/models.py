@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from helpfulfields.settings import RECENTLY_MINUTES
 from helpfulfields.text import (seo_title_label, seo_title_help,
                                 seo_description_label, seo_description_help,
                                 seo_keywords_label, seo_keywords_help,
@@ -53,7 +54,7 @@ class ChangeTracking(models.Model):
         """
         # Default to 30 minutes, as per previous implementation.
         if len(kwargs.keys()) == 0:
-            kwargs.update(minutes=30)
+            kwargs.update(minutes=RECENTLY_MINUTES)
         if not self.created:
             return False
         recently = datetime.now() - timedelta(**kwargs)
@@ -71,10 +72,10 @@ class ChangeTracking(models.Model):
         """
         # Default to 30 minutes, as per previous implementation.
         if len(kwargs.keys()) == 0:
-            kwargs.update(minutes=30)
+            kwargs.update(minutes=RECENTLY_MINUTES)
         if not self.modified:
             return False
-        recently = datetime.now() - timedelta(minutes=30)
+        recently = datetime.now() - timedelta(**kwargs)
         return self.modified >= recently
 
     class Meta:

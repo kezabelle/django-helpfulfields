@@ -2,6 +2,7 @@
 from datetime import datetime, timedelta
 from django.db.models import Q
 from django.db.models.query import QuerySet
+from helpfulfields.settings import RECENTLY_MINUTES
 
 # The querysets represented herein are designed to be used with their
 # approrpriate abstract models, and typically provide additional methods by
@@ -49,7 +50,7 @@ class ChangeTrackingQuerySet(QuerySet):
         """
         # Default to 30 minutes, as per previous implementation.
         if len(kwargs.keys()) == 0:
-            kwargs.update(minutes=30)
+            kwargs.update(minutes=RECENTLY_MINUTES)
         recently = datetime.now() - timedelta(**kwargs)
         return self.filter(created__gte=recently)
 
@@ -66,7 +67,7 @@ class ChangeTrackingQuerySet(QuerySet):
         """
         # Default to 30 minutes, as per previous implementation.
         if len(kwargs.keys()) == 0:
-            kwargs.update(minutes=30)
+            kwargs.update(minutes=RECENTLY_MINUTES)
         recently = datetime.now() - timedelta(**kwargs)
         return self.filter(modified__gte=recently)
 
