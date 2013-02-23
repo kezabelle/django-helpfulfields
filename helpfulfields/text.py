@@ -155,7 +155,7 @@ object_not_deleted = _(u"%(model)s object can't be restored because it has not "
 view_on_site_label = _(u'view on site')
 
 #: text used by :class:`~helpfulfields.admin.RelationList` to log a
-#: :exception:`~django.core.urlresolvers.NoReverseMatch`
+#: :exc:`~django.core.urlresolvers.NoReverseMatch`
 object_not_mounted = _(u'the %(verbose_name)s is not mounted on admin site %(site)s.')
 
 #: text used by :class:`~helpfulfields.admin.LogEntrySparklines` for displaying
