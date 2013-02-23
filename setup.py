@@ -8,9 +8,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 SHORT_DESC = (u'A reusable Django application for viewing and debugging '
               u'all the data that has been pushed into Haystack')
 
-REQUIREMENTS = open(os.path.join(BASE_DIR,
-                                 'helpfulfields',
-                                 'requirements.txt')).readlines()
+REQUIREMENTS = open(os.path.join(BASE_DIR, 'requirements.txt')).readlines()
 REQUIREMENTS = [x.strip() for x in REQUIREMENTS]
 
 TROVE_CLASSIFIERS = [
