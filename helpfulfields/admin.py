@@ -135,14 +135,6 @@ class ViewOnSite(object):
 
     which shows a link to view an object on the live site, assuming the `obj`
     has :meth:`~django.db.models.Model.get_absolute_url` defined.
-
-    .. admonition::
-        This callable object style was originally highlighted for me by
-        ``cdunklau`` in the #django IRC channel, as demonstrated by code he
-        released `into the public domain`_ `in a paste`_
-
-    .. _into the public domain: http://django-irc-logs.com/2013/feb/20/#934823
-    .. _in a paste: http://bpaste.net/show/9aU2f5BuO7f4prUnayWJ/
     """
     def __init__(self, text=view_on_site_label, label=view_on_site_label):
         """
@@ -188,15 +180,6 @@ class RelationCount(object):
 
     which adds a new column to the admin which shows the results of
     ``obj.accessor.count()`` and the verbose name.
-
-    .. admonition::
-        This callable object style was originally highlighted for me by
-        ``cdunklau`` in the #django IRC channel, as demonstrated by code he
-        released `into the public domain`_ `in a paste`_
-
-    .. _into the public domain: http://django-irc-logs.com/2013/feb/20/#934823
-    .. _in a paste: http://bpaste.net/show/9aU2f5BuO7f4prUnayWJ/
-
     """
     def __init__(self, accessor, label):
         """
@@ -246,14 +229,6 @@ class RelationList(object):
         We expect to be able to address the relation from the ``obj`` instance.
         As such, reverse relations denied via setting a ``related_name`` of ``+``
         won't work.
-
-    .. admonition::
-        This callable object style was originally highlighted for me by
-        ``cdunklau`` in the #django IRC channel, as demonstrated by code he
-        released `into the public domain`_ `in a paste`_
-
-    .. _into the public domain: http://django-irc-logs.com/2013/feb/20/#934823
-    .. _in a paste: http://bpaste.net/show/9aU2f5BuO7f4prUnayWJ/
     """
     def __init__(self, accessor, label, max_num=MAX_NUM_RELATIONS,
                  more_separator=None, admin_site='admin'):
