@@ -111,17 +111,37 @@ changetracking_fieldset = [
 
 class ViewOnSite(object):
     """
-    An object capable of being mixed into a standard
-    :class:`~django.contrib.admin.ModelAdmin` to enable use in the
-    :attr:`~django.contrib.admin.ModelAdmin.list_display`::
+    An object capable of being used in the
+    :class:`~django.contrib.admin.ModelAdmin`
+    :attr:`~django.contrib.admin.ModelAdmin.list_display` to enable a link to
+    the current object on the frontend of the website::
 
-        class MyModelAdmin(ViewOnSite, ModelAdmin):
-            list_display = ['__unicode__', 'view_on_site']
+        class MyModelAdmin(ModelAdmin):
+            list_display = ['pk', ViewOnSite('column name', 'view on site!')]
 
     which shows a link to view an object on the live site, assuming the `obj`
     has :meth:`~django.db.models.Model.get_absolute_url` defined.
+
+    .. admonition::
+        This callable object style was originally highlighted for me by
+        ``cdunklau`` in the #django IRC channel, as demonstrated by code he
+        released `into the public domain`_ `in a paste`_
+
+    .. _into the public domain: http://django-irc-logs.com/2013/feb/20/#934823
+    .. _in a paste: http://bpaste.net/show/9aU2f5BuO7f4prUnayWJ/
     """
-    def view_on_site(self, obj):
+    def __init__(self, text=view_on_site_label, label=view_on_site_label):
+        """
+        :param text: The text to display for each item, eg: "View on site"
+        :param label: the short description for the
+                      :meth:`~django.contrib.admin.ModelAdmin.changelist_view`
+                      changelist column.
+        """
+        self.short_description = label
+        self.text = text
+        self.allow_tags = True
+
+    def __call__(self, obj):
         """
         link to view an object on the live site, assuming the `obj`
         has :meth:`~django.db.models.Model.get_absolute_url` defined.
@@ -136,9 +156,10 @@ class ViewOnSite(object):
         output = (u'<a href="../../r/%(content_type)d/%(pk)d/" class="'
                   u'changelist-viewsitelink">%(text)s</a>')
         return output % {
-            'content_type': ContentType.objects.get_for_model(obj).pk,
-            'pk': obj.pk,
-            'text': force_unicode(view_on_site_label)
+            u'content_type': ContentType.objects.get_for_model(obj).pk,
+            u'pk': obj.pk,
+            u'text': escape(force_unicode(self.text))
         }
-    view_on_site.allow_tags = True
-    view_on_site.short_description = view_on_site_label
+
+
+        }
