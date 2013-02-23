@@ -1,8 +1,17 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime, timedelta
+import logging
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse, NoReverseMatch
 from django.utils.encoding import force_unicode
+from django.utils.html import escape
+from django.utils.translation import string_concat
 from helpfulfields.text import (seo_fieldset_label, changetracking_fieldset_label,
-                                dates_fieldset_label, view_on_site_label)
+                                dates_fieldset_label, view_on_site_label,
+                                object_not_mounted)
+
+logger = logging.getLogger(__name__)
 
 #: a fieldset for use in a :class:`~django.contrib.admin.ModelAdmin`
 #: :attr:`~django.contrib.admin.ModelAdmin.fieldsets` definition
@@ -162,4 +171,180 @@ class ViewOnSite(object):
         }
 
 
+class RelationCount(object):
+    """
+    An object capable of being used in the
+    :class:`~django.contrib.admin.ModelAdmin`
+    :attr:`~django.contrib.admin.ModelAdmin.list_display` to enable a count of
+    related items::
+
+        class MyModelAdmin(ModelAdmin):
+            list_display = ['pk', RelationCount('relation_name', 'item count')]
+
+    which adds a new column to the admin which shows the results of
+    ``obj.accessor.count()`` and the verbose name.
+
+    .. admonition::
+        This callable object style was originally highlighted for me by
+        ``cdunklau`` in the #django IRC channel, as demonstrated by code he
+        released `into the public domain`_ `in a paste`_
+
+    .. _into the public domain: http://django-irc-logs.com/2013/feb/20/#934823
+    .. _in a paste: http://bpaste.net/show/9aU2f5BuO7f4prUnayWJ/
+
+    """
+    def __init__(self, accessor, label):
+        """
+        :param accessor: The attribute to look for on each ``obj`` (Model instance)
+        :param label: the short description for the
+                      :meth:`~django.contrib.admin.ModelAdmin.changelist_view`
+                      changelist column.
+        """
+        self.accessor = accessor
+        self.short_description = label
+
+    def __call__(self, obj):
+        """
+        adds a new column to the admin which shows the results of
+        ``obj.accessor.count()`` and the verbose name.
+
+        .. note::
+            Doesn't currently handle pluralisation properly.
+
+        :param obj: the current object in the changelist loop.
+        :return: a count and verbose name, eg: *3 categories*.
+        :rtype: unicode string.
+        """
+        relation = getattr(obj, self.accessor)
+        relcount = relation.count()
+        vname = obj._meta.get_field_by_name(self.accessor)[0].opts.verbose_name,
+        return u'%(count)d %(verbose_name)s' % {
+            'count': relcount,
+            'verbose_name': vname,
         }
+
+
+class RelationList(object):
+    """
+    An object capable of being used in the
+    :class:`~django.contrib.admin.ModelAdmin`
+    :attr:`~django.contrib.admin.ModelAdmin.list_display` to show a linked list
+    of related items::
+
+        class MyModelAdmin(ModelAdmin):
+            list_display = ['pk', RelationList('accessor', 'item count')]
+
+    which adds a new column to the admin which shows the results of
+    ``obj.accessor.all()`` as links to the appropriate modeladmin page.
+
+    .. note::
+        We expect to be able to address the relation from the ``obj`` instance.
+        As such, reverse relations denied via setting a ``related_name`` of ``+``
+        won't work.
+
+    .. admonition::
+        This callable object style was originally highlighted for me by
+        ``cdunklau`` in the #django IRC channel, as demonstrated by code he
+        released `into the public domain`_ `in a paste`_
+
+    .. _into the public domain: http://django-irc-logs.com/2013/feb/20/#934823
+    .. _in a paste: http://bpaste.net/show/9aU2f5BuO7f4prUnayWJ/
+    """
+    def __init__(self, accessor, label, max_num=3, more_separator=None,
+                 admin_site='admin'):
+        """
+        :param accessor: The attribute to look for on each ``obj``
+                              (Model instance)
+        :param label: the short description for the
+                      :meth:`~django.contrib.admin.ModelAdmin.changelist_view`
+                      changelist column.
+        :param max_num: The maximum number of related item links to show.
+        :param more_separator: the content between items, and the "N more" link.
+        :param admin_site: the URL namespace of the admin.
+        """
+        self.accessor = accessor
+        self.max_num = max_num
+        self.short_description = label
+        self.admin_url = admin_site
+        self.more_content = more_separator or u'&hellip;'
+        self.allow_tags = True
+
+    def __call__(self, obj):
+        """
+        adds a new column to the admin which shows the results of
+        ``obj.accessor.all()`` as links to the appropriate modeladmin page.
+
+        :param obj: the current object in the changelist loop.
+        :return: a comma separated list of links to the related objects.
+        :rtype: unicode string.
+        """
+        relation = getattr(obj, self.accessor)
+        if callable(relation):
+            relation = relation()
+        # TODO: it'd be really nice if this could handle methods on ``obj``
+        relation_obj = obj._meta.get_field_by_name(self.accessor)[0]
+        url_parts = {
+            'admin': self.admin_url,
+            'module': relation_obj.opts.app_label,
+            'klass': relation_obj.opts.module_name,
+        }
+        cl_link = '%(admin)s:%(module)s_%(klass)s_changelist'
+        c_link = '%(admin)s:%(module)s_%(klass)s_change'
+        try:
+            url = reverse(cl_link % url_parts)
+        except NoReverseMatch:
+            # Unable to find the relation mounted on the admin, we may throw
+            # the problem up to the user if in debug mode, otherwise we log it
+            # and move on.
+            if settings.DEBUG:
+                raise
+            logger.debug(object_not_mounted % {
+                'verbose_name': relation_obj.opts.object_name,
+                'site': u'"%s"' % self.admin_url,
+            })
+            return u''
+
+        # force evaluation now, so that we know what we've got in 1 query.
+        # We need the whole list, even if we're discarding some of it, so that
+        # we know what primary keys to filter the "more" changelist link for.
+        try:
+            object_list = list(relation.all())
+        except AttributeError:
+            # If for some reason it's not a descriptor/manager for a relation
+            # queryset - perhaps it's a foreign key or something. We'll hope
+            # for the best that we can continue.
+            # If relation is None, (a null FK, for example), continue assuming
+            # there's no relations to deal with.
+            object_list = list([relation])
+
+        n_more = u'%(url)s?id__in=%(filter_pks)s' % {
+            'url': url,
+            'filter_pks': ','.join([force_unicode(x.pk) for x in object_list]),
+        }
+        count = len(object_list)
+
+        # handle adding the "... 3 more" to the content.
+        more_link = u''
+        if count > self.max_num:
+            more_parts = {
+                'url': n_more,
+                'count': count - self.max_num,
+                'separator': self.more_content,
+            }
+            more_link = (u'%(separator)s<a href="%(url)s" '
+                         u'class="changelist-morerelatedlink">%(count)d'
+                         u'&nbsp;more</a>' % more_parts)
+
+        # handle generating the admin edit link for each individual relation.
+        edit_link = (u'<a href="%(url)s" class="changelist-relatedlink"'
+                     u'>%(link)s</a>')
+        items = u', '.join([
+            edit_link % {
+                'url': reverse(c_link % url_parts, args=(x.pk,)),
+                'link': escape(x)
+            }
+            for x in object_list[0:self.max_num]
+        ])
+
+        # more_link may be empty ...
+        return string_concat(items, more_link)
