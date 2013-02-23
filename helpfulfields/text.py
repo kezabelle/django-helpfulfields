@@ -158,11 +158,11 @@ view_on_site_label = _(u'view on site')
 #: :exc:`~django.core.urlresolvers.NoReverseMatch`
 object_not_mounted = _(u'the %(verbose_name)s is not mounted on admin site %(site)s.')
 
-#: text used by :class:`~helpfulfields.admin.LogEntrySparklines` for displaying
+#: text used by :class:`~helpfulfields.admin.LogEntrySparkline` for displaying
 #: a default value in the changelist column header.
 logentry_label = _(u'change history')
 
-#: text used by :class:`~helpfulfields.admin.LogEntrySparklines` for scenarios
+#: text used by :class:`~helpfulfields.admin.LogEntrySparkline` for scenarios
 #: in which there are no :class:`~django.contrib.admin.models.LogEntry`
 #: objects for the given period.
 logentry_empty = _(u'no changes')

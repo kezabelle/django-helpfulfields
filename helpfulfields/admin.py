@@ -355,13 +355,48 @@ class RelationList(object):
         return string_concat(items, more_link)
 
 
-class LogEntrySparklines(object):
+class LogEntrySparkline(object):
+    """
+    An object capable of being used in the
+    :class:`~django.contrib.admin.ModelAdmin`
+    :attr:`~django.contrib.admin.ModelAdmin.list_display` to show a tiny
+    HTML-only sparkline of recent changes made via the admin::
+
+        class MyModelAdmin(ModelAdmin):
+            list_display = ['pk', LogEntrySparkline(days=60)]
+
+    .. note::
+        It is worth highlighting that this will potentially result in a maximum
+        of **two** additional queries being executed, *per object*, to get
+        the :class:`~django.contrib.contenttypes.models.ContentType` and the
+        :class:`~django.contrib.admin.models.LogEntry` items.
+
+    .. note::
+        For the sake of being portable, and not requiring we be in the
+        `INSTALLED_APPS`, the HTML and CSS are actually declared
+        on this class, rather than via a template which we might
+        :func:`~django.template.loader.render_to_string`. This may yet be a
+        mistake, so the API methods should be considered private.
+    """
     def __init__(self, days=14, label=logentry_label):
+        """
+        :param days: How far back should we generate a sparkline for.
+        :param label: the short description for the
+                      :meth:`~django.contrib.admin.ModelAdmin.changelist_view`
+                      changelist column.
+        """
         self.short_description = label
         self.days = days
         self.allow_tags = True
 
     def __call__(self, obj):
+        """
+        generates the necessary data for displaying a sparkline.
+
+        :param obj: the current object in the changelist loop.
+        :return: the HTML representing the sparkline graph.
+        :rtype: unicode string.
+        """
         ct = ContentType.objects.get_for_model(obj)
         now = datetime.now()
         back_to = now - timedelta(days=self.days)
@@ -395,12 +430,18 @@ class LogEntrySparklines(object):
 
         ctx = Context({
             'sparks': results,
-            'sparkbar_css': self.sparkline_bar_css(),
-            'sparkline_css': self.sparkline_graph_css()
+            'sparkbar_css': self._sparkline_bar_css(),
+            'sparkline_css': self._sparkline_graph_css()
         })
-        return self.sparkline_template().render(ctx)
+        return self._sparkline_template().render(ctx)
 
-    def sparkline_bar_css(self):
+    def _sparkline_bar_css(self):
+        """
+        generates the necessary CSS for an individual bar on the graph.
+
+        :return: the CSS, as minified as we can get it.
+        :rtype: unicode string.
+        """
         css = {
             'width': '0.3em',
             'margin': '0 0.05em',
@@ -410,7 +451,13 @@ class LogEntrySparklines(object):
         }
         return ''.join(['%s:%s;' % rule_val for rule_val in css.items()])
 
-    def sparkline_graph_css(self):
+    def _sparkline_graph_css(self):
+        """
+        generates the necessary CSS for the sparkline graph itself.
+
+        :return: the CSS, as minified as we can get it.
+        :rtype: unicode string.
+        """
         css = {
             'height': '1em',
             'border-bottom': '1px dotted #5b80b2',
@@ -418,7 +465,13 @@ class LogEntrySparklines(object):
         }
         return ''.join(['%s:%s;' % rule_val for rule_val in css.items()])
 
-    def sparkline_template(self):
+    def _sparkline_template(self):
+        """
+        generates the HTML, implements each bar and the appropriate CSS.
+
+        :return: the template, ready to be rendered.
+        :rtype: :class:`~django.template.base.Template`
+        """
         return Template('''
         <div class="changelist-sparkline" style="{{ sparkline_css }}">
         {% for date, spark in sparks %}
