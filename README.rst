@@ -18,7 +18,7 @@ Contributing
 There is a `GitHub`_ repository at `kezabelle/django-helpfulfields`_ which
 is the canonical location for involvement. Use the app. Open issues.
 
-.. Django_: https://www.djangoproject.com/
-.. Read the docs_: https://readthedocs.org/
-.. GitHub_: https://github.com/
-.. kezabelle/django-helpfulfields_: https://github.com/kezabelle/django-helpfulfields/tree/master
+.. _Django: https://www.djangoproject.com/
+.. _Read the docs: https://readthedocs.org/
+.. _GitHub: https://github.com/
+.. _kezabelle/django-helpfulfields: https://github.com/kezabelle/django-helpfulfields/tree/master

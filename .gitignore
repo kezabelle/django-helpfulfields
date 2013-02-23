@@ -1,3 +1,4 @@
 *.pyc
 docs/_build
 django_helpfulfields.egg-info
+dist
