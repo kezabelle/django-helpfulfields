@@ -365,9 +365,9 @@ class LogEntrySparkline(object):
         the :class:`~django.contrib.contenttypes.models.ContentType` and the
         :class:`~django.contrib.admin.models.LogEntry` items.
 
-        This will be amortized down to **one** query, once
-        :class:`~django.contrib.contenttypes.models.ContentType`s have been
-        cached internally by `Django`_.
+        This will be amortized down to **one** query, once all needed
+        :class:`~django.contrib.contenttypes.models.ContentType` objects have
+        been cached internally by `Django`_.
 
     .. note::
         For the sake of being portable, and not requiring we be in the
