@@ -21,8 +21,9 @@ from helpfulfields.text import (seo_title_label, seo_title_help,
 class ChangeTracking(models.Model):
     """
     Abstract model for extending custom models with an audit of when things were
-    changed. By extension, allows us to use get_latest_by to establish the most
-    recent things.
+    changed. By extension, allows us to use
+    :attr:`~django.db.models.Options.get_latest_by` and
+    :meth:`~django.db.models.Model.get_next_by_FOO` if we want to.
 
     .. note::
         It transpires that this is basically an accidental rewrite of
@@ -30,13 +31,13 @@ class ChangeTracking(models.Model):
         extra bits.
     """
 
-    #: a :mod:`datetime.datetime` representing the original date this
+    #: a :class:`~datetime.datetime` representing the original date this
     #: object was saved. Represented as a
     #: :class:`~django.db.models.DateTimeField`.
     created = models.DateTimeField(auto_now_add=True, verbose_name=created_label,
                                    help_text=created_help)
 
-    #: a :mod:`datetime.datetime` representing the last time this
+    #: a :class:`~datetime.datetime` representing the last time this
     #: object was changed. Represented as a
     #: :class:`~django.db.models.DateTimeField`.
     modified = models.DateTimeField(auto_now=True, verbose_name=modified_label,
@@ -46,7 +47,7 @@ class ChangeTracking(models.Model):
         """
         Was this object created recently?
         Accepts a list of `kwargs` which are passed directly to
-        :func:`~datetime.timedelta`; in the absence of any `kwargs` the timedelta
+        :class:`~datetime.timedelta`; in the absence of any `kwargs` the timedelta
         is told 30 minutes is recent.
 
         :return: whether or not this object was recently created
@@ -64,7 +65,7 @@ class ChangeTracking(models.Model):
         """
         Was this object changed recently?
         Accepts a list of `kwargs` which are passed directly to
-        :func:`~datetime.timedelta`; in the absence of any `kwargs` the timedelta
+        :class:`~datetime.timedelta`; in the absence of any `kwargs` the timedelta
         is told 30 minutes is recent.
 
         :return: whether or not this object was recently changed.
@@ -179,7 +180,7 @@ class Publishing(models.Model):
     """
 
     #: :class:`~django.db.models.BooleanField` deciding whether or not the
-    #: object is available on the site. Defaults to `False`.
+    #: object is available on the site. Defaults to :data:`False`.
     is_published = models.BooleanField(default=False,
                                        verbose_name=quick_publish_label,
                                        help_text=quick_publish_help)
@@ -197,15 +198,15 @@ class DatePublishing(models.Model):
     :class:`~helpfulfields.querysets.DatePublishingQuerySet`.
     """
 
-    #: Defaults to :py:mod:`datetime.datetime.now()` - the date on which this
+    #: Defaults to :meth:`datetime.datetime.now()` - the date on which this
     #: should be available on the site. Represented as a
     #: :class:`~django.db.models.DateTimeField`.
     publish_on = models.DateTimeField(default=datetime.now,
                                       verbose_name=publish_label,
                                       help_text=publish_help)
 
-    #: the date on which this should expire from the site. Represented as
-    #: a :class:`~django.db.models.DateTimeField`.
+    #: the :class:`~datetime.datetime` on which this should expire from the
+    #: site. Represented as a :class:`~django.db.models.DateTimeField`.
     unpublish_on = models.DateTimeField(default=None, blank=True, null=True,
                                         verbose_name=unpublish_label,
                                         help_text=unpublish_help)
@@ -215,7 +216,7 @@ class DatePublishing(models.Model):
         """
         For API compatibility with the alternate publishing model
         :class:`Publishing` which uses a boolean property, this method is
-        accessed the same way, and is decorated with `@property` for this reason.
+        accessed the same way, and is decorated with :func:`~property` for this reason.
 
         :return: Whether or not this object is currently visible
         :rtype: boolean
@@ -295,13 +296,22 @@ class Generic(models.Model):
     """
     For handling generic relations in a uniform way (assuming that only 1 is
     required on the subclassing model).
-
-      * Doesn't provide a related_name from ContentType back to the subclass.
-      * Uses a CharField for the content_id, so that apps may have non-integer
-        primary keys (eg: uuid4())
     """
+
+    #: The foreign key to `Django`_'s internal
+    #: :class:`~django.contrib.contenttypes.models.ContentType` for a specific
+    #: model. Doesn't provide a
+    #: :attr:`~django.db.models.ForeignKey.related_name` from
+    #: :class:`~django.contrib.contenttypes.models.ContentType` back to
+    #: the subclass implementing this model.
     content_type = models.ForeignKey(ContentType, related_name='+')
+
+    #: Uses a :class:`~django.db.models.CharField`,
+    #: so that apps may have non-integer primary keys (eg: :func:`~uuid.uuid4`)
     content_id = models.CharField(max_length=255, db_index=True)
+
+    #: A virtual field which allows us to get the actual object, as and when
+    #: we need it. Calling this will almost always result in a query.
     content_object = GenericForeignKey('content_type', 'content_id')
 
     class Meta:

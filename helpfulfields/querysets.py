@@ -31,19 +31,17 @@ from helpfulfields.settings import RECENTLY_MINUTES
 
 class ChangeTrackingQuerySet(QuerySet):
     """
-    A custom queryset for filtering models using the :class:`ChangeTracking`
-    model.
-
-    Recommended to be used by mixing together querysets and using
-    `django-model-utils`_ to make a PassThrough manager.
+    A custom queryset for filtering models using the
+    :class:`~helpfulfields.models.ChangeTracking` model.
     """
     def created_recently(self, **kwargs):
-        """Goes hand in hand with the `created_recently` method. Finds all
-        object instances created within the last N minutes.
+        """Goes hand in hand with the
+        :meth:`~helpfulfields.models.ChangeTracking.created_recently`
+        method. Finds all object instances created within the last N minutes.
 
         Accepts a list of `kwargs` which are passed directly to
-        :func:`~datetime.timedelta`; in the absence of any `kwargs` the timedelta
-        is told 30 minutes is recent.
+        :class:`~datetime.timedelta`; in the absence of any `kwargs` the
+        :class:`~datetime.timedelta` is told 30 minutes is recent.
 
         :return: filtered objects
         :rtype: :class:`~django.db.models.query.QuerySet` subclass
@@ -55,12 +53,13 @@ class ChangeTrackingQuerySet(QuerySet):
         return self.filter(created__gte=recently)
 
     def modified_recently(self, **kwargs):
-        """Goes hand in hand with the `modified_recently` method. Finds all
-        object instances modified within the last N minutes.
+        """Goes hand in hand with the
+        :meth:`~helpfulfields.models.ChangeTracking.modified_recently` method.
+        Finds all object instances modified within the last N minutes.
 
         Accepts a list of `kwargs` which are passed directly to
-        :func:`~datetime.timedelta`; in the absence of any `kwargs` the timedelta
-        is told 30 minutes is recent.
+        :class:`~datetime.timedelta`; in the absence of any `kwargs` the
+        :class:`~datetime.timedelta` is told 30 minutes is recent.
 
         :return: filtered objects
         :rtype: :class:`~django.db.models.query.QuerySet` subclass
@@ -74,15 +73,14 @@ class ChangeTrackingQuerySet(QuerySet):
 
 class PublishingQuerySet(QuerySet):
     """
-    A custom queryset for filtering things using the :class:`Publishing`
-    abstract model via it's boolean.
-
-    Recommended to be used by mixing together querysets and using
-    `django-model-utils`_ to make a PassThrough manager.
+    A custom queryset for filtering things using the
+    :class:`~helpfulfields.models.Publishing` abstract model via it's boolean.
     """
     def published(self):
         """
-        Find all objects who have have `is_published` set to *True*.
+        Find all objects who have have
+        :attr:`~helpfulfields.models.Publishing.is_published` set to
+        :data:`True`.
 
         :return: All published objects
         :rtype: :class:`~django.db.models.query.QuerySet` subclass
@@ -91,7 +89,9 @@ class PublishingQuerySet(QuerySet):
 
     def unpublished(self):
         """
-        Find all objects who have have `is_published` set to *False*.
+        Find all objects who have have
+        :attr:`~helpfulfields.models.Publishing.is_published` set to
+        :data:`False`.
 
         :return: All published objects
         :rtype: :class:`~django.db.models.query.QuerySet` subclass
@@ -101,16 +101,17 @@ class PublishingQuerySet(QuerySet):
 
 class DatePublishingQuerySet(QuerySet):
     """
-    A custom queryset for filtering things using the :class:`DatePublishing`
-    abtract model via the new fields it provides.
-
-    Recommended to be used by mixing together querysets and using
-    `django-model-utils`_ to make a PassThrough manager.
+    A custom queryset for filtering things using the
+    :class:`~helpfulfields.models.DatePublishing` abtract model via the new
+    fields it provides.
     """
     def published(self):
         """
-        Find all objects who have an end publishing date in the future, or no
-        end date, and ALSO have a publish date in the past or present.
+        Find all objects whose
+        :attr:`~helpfulfields.models.DatePublishing.unpublish_on` value is in
+        the future, or is null, **and also** have a
+        :attr:`~helpfulfields.models.DatePublishing.publish_on` value which is
+        in the past or present.
 
         :return: All published objects
         :rtype: :class:`~django.db.models.query.QuerySet` subclass
@@ -122,8 +123,11 @@ class DatePublishingQuerySet(QuerySet):
 
     def unpublished(self):
         """
-        Find all objects who have an end publishing date in the past, OR a start
-        date in the future.
+        Find all objects whose
+        :attr:`~helpfulfields.models.DatePublishing.unpublish_on` value is in
+        the past, **or alternatively have** a
+        :attr:`~helpfulfields.models.DatePublishing.publish_on` value which is
+        still in the future.
 
         :return: All unpublished objects
         :rtype: :class:`~django.db.models.query.QuerySet` subclass
@@ -134,7 +138,8 @@ class DatePublishingQuerySet(QuerySet):
 
 class SoftDeleteQuerySet(QuerySet):
     """
-    A custom queryset which goes hand in hand with the :class:`SoftDelete` model
+    A custom queryset which goes hand in hand with the
+    :class:`~helpfulfields.models.SoftDelete` model
     to provide a way to filter by the additional field that creates.
 
     .. warning::
