@@ -144,6 +144,7 @@ class ViewOnSite(object):
                       changelist column.
         """
         self.short_description = label
+        self.__name__ = label
         self.text = text
         self.allow_tags = True
 
@@ -199,6 +200,7 @@ class RelationCount(object):
         """
         self.accessor = accessor
         self.short_description = label
+        self.__name__ = label
 
     def __call__(self, obj):
         """
@@ -264,6 +266,7 @@ class RelationList(object):
         self.accessor = accessor
         self.max_num = max_num
         self.short_description = label
+        self.__name__ = label
         self.admin_url = admin_site
         self.more_content = more_separator or u'&hellip;'
         self.allow_tags = True
@@ -408,6 +411,7 @@ class LogEntrySparkline(object):
                       changelist column.
         """
         self.short_description = label
+        self.__name__ = label
         self.days = days
         self.allow_tags = True
 
