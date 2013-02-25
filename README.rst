@@ -11,8 +11,8 @@ reusable quasi-components, importable into any `Django`_ project.
 Documentation
 -------------
 
-Exists in the `docs` directory. Eventually, I'll put it on `Read the docs`_,
-but it needs to be installable into a *virtualenv* first.
+Documentation is available via the wonderful `Read the docs`_ - the
+`latest build`_ can be found at https://django-helpfulfields.readthedocs.org/en/latest/index.html.
 
 Things it provides
 ------------------
@@ -62,6 +62,7 @@ and should also be present in any distributed downloads.
 
 .. _Django: https://www.djangoproject.com/
 .. _Read the docs: https://readthedocs.org/
+.. _latest build: https://django-helpfulfields.readthedocs.org/en/latest/index.html
 .. _GitHub: https://github.com/
 .. _kezabelle/django-helpfulfields: https://github.com/kezabelle/django-helpfulfields/tree/master
 .. _FreeBSD: http://en.wikipedia.org/wiki/BSD_licenses#2-clause_license_.28.22Simplified_BSD_License.22_or_.22FreeBSD_License.22.29
