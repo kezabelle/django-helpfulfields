@@ -180,6 +180,15 @@ class RelationCount(object):
 
     which adds a new column to the admin which shows the results of
     ``obj.accessor.count()`` and the verbose name.
+
+    .. note::
+        We expect to be able to address the relation from the ``obj`` instance.
+        As such, reverse relations denied via setting a ``related_name`` of ``+``
+        won't work.
+
+    .. warning::
+        This should result in a maximum of **one** additional query being
+        executed, *per object, per usage*, to get a count of related objects.
     """
     def __init__(self, accessor, label):
         """
@@ -229,6 +238,16 @@ class RelationList(object):
         We expect to be able to address the relation from the ``obj`` instance.
         As such, reverse relations denied via setting a ``related_name`` of ``+``
         won't work.
+
+    .. warning::
+        It is worth highlighting that this should result in a maximum
+        of **one** additional query being executed, *per object, per usage*, to
+        get list of related objects. Changing the
+        :class:`~django.contrib.admin.ModelAdmin` to use
+        :meth:`~django.db.models.query.QuerySet.select_related` and/or
+        :meth:`~django.db.models.query.QuerySet.prefetch_related` may remove
+        this extra query.
+
     """
     def __init__(self, accessor, label, max_num=MAX_NUM_RELATIONS,
                  more_separator=None, admin_site='admin'):
@@ -340,11 +359,15 @@ class LogEntrySparkline(object):
         class MyModelAdmin(ModelAdmin):
             list_display = ['pk', LogEntrySparkline(days=60)]
 
-    .. note::
+    .. warning::
         It is worth highlighting that this will potentially result in a maximum
         of **two** additional queries being executed, *per object*, to get
         the :class:`~django.contrib.contenttypes.models.ContentType` and the
         :class:`~django.contrib.admin.models.LogEntry` items.
+
+        This will be amortized down to **one** query, once
+        :class:`~django.contrib.contenttypes.models.ContentType`s have been
+        cached internally by `Django`_.
 
     .. note::
         For the sake of being portable, and not requiring we be in the
@@ -401,10 +424,10 @@ class LogEntrySparkline(object):
         back_to = now - timedelta(days=self.days)
 
         # get all entries for this object in the last N days.
-        entries = (LogEntry.objects
-                   .filter(content_type=ct, object_id=obj.pk)
-                   .filter(action_time__gte=back_to)
-                   .order_by('-action_time'))
+        # Note: It doesn't matter what order results are returned in, as
+        # we're popping them into a separate, unsorted data structure anyway.
+        entries = LogEntry.objects.filter(content_type=ct, object_id=obj.pk,
+                                          action_time__gte=back_to)
 
         # generate the initial list of items.
         days_with_counts = {}
@@ -416,7 +439,7 @@ class LogEntrySparkline(object):
         for entry in entries:
             days_with_counts[entry.action_time.date()] += 1
 
-        maximum = max(days_with_counts.values()) #: 100%!
+        maximum = max(days_with_counts.values()) #: 1em / 100%
         if maximum < 1:
             return logentry_empty
 

@@ -136,6 +136,10 @@ class SoftDeleteQuerySet(QuerySet):
     """
     A custom queryset which goes hand in hand with the :class:`SoftDelete` model
     to provide a way to filter by the additional field that creates.
+
+    .. warning::
+        This should not be relied on to prevent data loss, as it is very much
+        an incomplete idea right now.
     """
     def all(self):
         """ Finds all objects which haven't been marked as deleted. This

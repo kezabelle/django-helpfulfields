@@ -236,6 +236,11 @@ class SoftDelete(models.Model):
 
     The idea is that nothing should ever really be deleted, but I have no idea
     how feasible this is at an abstract level.
+
+    .. warning::
+        This should not be relied on to prevent data loss, as it is very much
+        an incomplete idea right now.
+
     """
     DELETED_CHOICES = (
         (None, soft_delete_initial),
