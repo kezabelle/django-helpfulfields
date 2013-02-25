@@ -10,7 +10,6 @@ quasi-components, importable into any `Django`_ project.
 .. toctree::
     :maxdepth: 10
 
-    about
     models
     querysets
     admin
