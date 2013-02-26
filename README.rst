@@ -60,6 +60,25 @@ It's `FreeBSD`_. a ``LICENSE`` file can be found in the root of the repository,
 and should also be present in any distributed downloads.
 
 
+Status
+------
+
+`Django`_ `unit tests`_ are now available, via ``python setup.py test`` or
+``python manage.py test helpfulfields``, which should be slightly re-assuring.
+
+Below is the coverage report from ``python setup.py test``, for the
+current version::
+
+    Name                      Stmts   Miss  Cover   Missing
+    -------------------------------------------------------
+    helpfulfields/admin         113      9    92%   161, 285, 297-307, 314-320
+    helpfulfields/models         86      8    91%   272-277, 288-295
+    helpfulfields/querysets      39      6    85%   156-157, 167-168, 177-178
+    helpfulfields/settings        2      0   100%
+    helpfulfields/text           37      1    97%   9
+    -------------------------------------------------------
+    TOTAL                       277     24    91%
+
 .. _Django: https://www.djangoproject.com/
 .. _Read the docs: https://readthedocs.org/
 .. _latest build: https://django-helpfulfields.readthedocs.org/en/latest/index.html
@@ -68,3 +87,4 @@ and should also be present in any distributed downloads.
 .. _FreeBSD: http://en.wikipedia.org/wiki/BSD_licenses#2-clause_license_.28.22Simplified_BSD_License.22_or_.22FreeBSD_License.22.29
 .. _issue tracker: https://github.com/kezabelle/django-helpfulfields/issues/
 .. _my Twitter account: https://twitter.com/kezabelle/
+.. _unit tests: https://docs.djangoproject.com/en/stable/topics/testing/
