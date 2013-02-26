@@ -8,8 +8,23 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 SHORT_DESC = (u'A reusable Django application for viewing and debugging '
               u'all the data that has been pushed into Haystack')
 
-REQUIREMENTS = open(os.path.join(BASE_DIR, 'requirements.txt')).readlines()
-REQUIREMENTS = [x.strip() for x in REQUIREMENTS]
+
+def tidy_requirements(requirement_file):
+    """
+    simplistic parsing of our requirements files to generate dependencies for
+    the setup file.
+    """
+    outdata = []
+    with open(requirement_file) as dependencies:
+        for line in dependencies:
+            line = line.strip()
+            if line and not line.startswith('#') and line not in outdata:
+                outdata.append(line)
+    return outdata
+
+REQUIREMENTS = tidy_requirements(os.path.join(BASE_DIR, 'requirements.txt'))
+TEST_REQUIREMENTS = tidy_requirements(os.path.join(BASE_DIR,
+                                                   'requirements_dev.txt'))
 
 TROVE_CLASSIFIERS = [
     'Development Status :: 3 - Alpha',
@@ -40,6 +55,8 @@ setup(
     url='https://github.com/kezabelle/django-helpfulfields/tree/master',
     packages=PACKAGES,
     install_requires=REQUIREMENTS,
+    tests_require=TEST_REQUIREMENTS,
+    test_suite='setuptest.setuptest.SetupTestSuite',
     classifiers=TROVE_CLASSIFIERS,
     platforms=['OS Independent'],
 )
