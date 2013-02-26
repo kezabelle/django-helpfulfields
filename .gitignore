@@ -1,4 +1,10 @@
 *.pyc
 docs/_build
-django_helpfulfields.egg-info
+*.egg-info
 dist
+coverage-*.egg
+coverage.xml
+argparse-*.egg
+pep8-*.egg
+pep8.txt
+django_setuptest-*.egg
