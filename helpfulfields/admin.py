@@ -215,11 +215,11 @@ class RelationCount(object):
         :rtype: unicode string.
         """
         relation = getattr(obj, self.accessor)
-        relcount = relation.count()
-        vname = obj._meta.get_field_by_name(self.accessor)[0].opts.verbose_name,
+        self._relcount = relation.count()
+        self._vname = obj._meta.get_field_by_name(self.accessor)[0].opts.verbose_name,
         return u'%(count)d %(verbose_name)s' % {
-            'count': relcount,
-            'verbose_name': vname,
+            'count': self._relcount,
+            'verbose_name': self._vname,
         }
 
 
@@ -323,14 +323,14 @@ class RelationList(object):
             'url': url,
             'filter_pks': ','.join([force_unicode(x.pk) for x in object_list]),
         }
-        count = len(object_list)
+        self._count = len(object_list)
 
         # handle adding the "... 3 more" to the content.
         more_link = u''
-        if count > self.max_num:
+        if self._count > self.max_num:
             more_parts = {
                 'url': n_more,
-                'count': count - self.max_num,
+                'count': self._count - self.max_num,
                 'separator': self.more_content,
             }
             more_link = (u'%(separator)s<a href="%(url)s" '
