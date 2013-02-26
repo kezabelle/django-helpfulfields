@@ -63,8 +63,10 @@ and should also be present in any distributed downloads.
 Status
 ------
 
-`Django`_ `unit tests`_ are now available, via ``python setup.py test`` or
-``python manage.py test helpfulfields``, which should be slightly re-assuring.
+`unit tests`_ are now available, via ``python setup.py test`` or
+``python manage.py test helpfulfields``, which should be slightly re-assuring;
+there are currently **12** test cases, split into **19** individual tests, which
+assert **61** variants.
 
 Below is the coverage report from ``python setup.py test``, for the
 current version::
@@ -72,12 +74,12 @@ current version::
     Name                      Stmts   Miss  Cover   Missing
     -------------------------------------------------------
     helpfulfields/admin         113      9    92%   161, 285, 297-307, 314-320
-    helpfulfields/models         86      8    91%   272-277, 288-295
+    helpfulfields/models         94      8    91%   282-287, 298-305
     helpfulfields/querysets      39      6    85%   156-157, 167-168, 177-178
     helpfulfields/settings        2      0   100%
     helpfulfields/text           37      1    97%   9
     -------------------------------------------------------
-    TOTAL                       277     24    91%
+    TOTAL                       285     24    92%
 
 .. _Django: https://www.djangoproject.com/
 .. _Read the docs: https://readthedocs.org/
