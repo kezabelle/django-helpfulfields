@@ -211,8 +211,7 @@ class DatePublishing(models.Model):
                                         verbose_name=unpublish_label,
                                         help_text=unpublish_help)
 
-    @property
-    def is_published(self):
+    def _get_is_published(self):
         """
         For API compatibility with the alternate publishing model
         :class:`Publishing` which uses a boolean property, this method is
@@ -227,6 +226,23 @@ class DatePublishing(models.Model):
             return self.unpublish_on >= now and self.publish_on <= now
         else:
             return self.publish_on <= now
+
+    def _set_is_published(self, value):
+        now = datetime.now() - timedelta(seconds=1)
+        if value:
+            self.publish_on = now
+            self.unpublish_on = None
+        else:
+            self.publish_on = now
+            self.unpublish_on = now
+
+    is_published = property(_get_is_published, _set_is_published)
+
+    def unpublish(self, using=None):
+        assert self.is_published is True, 'cannot unpublish an unpublised thing!'
+        self.unpublish_on = datetime.now() - timedelta(seconds=1)
+        return self.save(using)
+
 
     class Meta:
         abstract = True
