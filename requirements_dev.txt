@@ -1,0 +1,8 @@
+# the following are dependencies of setuptest, which we're documenting here
+# so that we know wtf we're pulling in.
+pep8
+coverage
+# this is required for python 2.6, see https://github.com/praekelt/django-setuptest/pull/7
+argparse
+django-setuptest
+django-model-utils==1.2.0
