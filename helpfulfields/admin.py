@@ -135,6 +135,8 @@ class ViewOnSite(object):
 
     which shows a link to view an object on the live site, assuming the `obj`
     has :meth:`~django.db.models.Model.get_absolute_url` defined.
+
+    :test case: :class:`helpfulfields.tests.ViewOnSiteTestCase`
     """
     def __init__(self, text=view_on_site_label, label=view_on_site_label):
         """
@@ -190,6 +192,8 @@ class RelationCount(object):
     .. warning::
         This should result in a maximum of **one** additional query being
         executed, *per object, per usage*, to get a count of related objects.
+
+    :test case: :class:`helpfulfields.tests.RelationCountTestCase`
     """
     def __init__(self, accessor, label):
         """
@@ -250,6 +254,7 @@ class RelationList(object):
         :meth:`~django.db.models.query.QuerySet.prefetch_related` may remove
         this extra query.
 
+    :test case: :class:`helpfulfields.tests.RelationListTestCase`
     """
     def __init__(self, accessor, label, max_num=MAX_NUM_RELATIONS,
                  more_separator=None, admin_site='admin'):
@@ -402,6 +407,7 @@ class LogEntrySparkline(object):
             <div class="changelist-sparkline-bar" style="height:0.3em;width:0.3em;vertical-align:baseline;margin:0 0.05em;display:inline-block;background-color:#7CA0C7;"></div>
         </div>
 
+    :test case: :class:`helpfulfields.tests.SparklineTestCase`
     """
     def __init__(self, days=14, label=logentry_label):
         """
@@ -498,10 +504,10 @@ class LogEntrySparkline(object):
         :return: the template, ready to be rendered.
         :rtype: :class:`~django.template.base.Template`
         """
-        return Template('''
+        return Template('''{% spaceless %}
         <div class="changelist-sparkline" style="{{ sparkline_css }}">
         {% for date, spark in sparks %}
             <div class="changelist-sparkline-bar" style="height:{{ spark }}em;{{ sparkbar_css }}"></div>
         {% endfor %}
         </div>
-        ''')
+        {% endspaceless %}''')

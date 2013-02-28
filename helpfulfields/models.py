@@ -29,6 +29,8 @@ class ChangeTracking(models.Model):
         It transpires that this is basically an accidental rewrite of
         `django-model-utils`_ TimeStampedModel, though it provides a few
         extra bits.
+
+    :test case: :class:`helpfulfields.tests.ChangeTrackingTestCase`
     """
 
     #: a :class:`~datetime.datetime` representing the original date this
@@ -88,6 +90,8 @@ class Titles(models.Model):
 
     Also supplies a get_menu_title method, which falls back to the title if no
     menu title is set.
+
+    :test case: :class:`helpfulfields.tests.TitlesTestCase`
     """
 
     #: Required :class:`~django.db.models.CharField` for an object,
@@ -120,6 +124,8 @@ class SEO(models.Model):
 
     Attempts to maintain compatibility with `django CMS`_, in terms of access
     methods, but not underlying objects  (as `django CMS`_ has Title objects).
+
+    :test case: :class:`helpfulfields.tests.SEOTestCase`
     """
 
     #: a :class:`~django.db.models.CharField` for storing the page's
@@ -177,6 +183,8 @@ class Publishing(models.Model):
 
     For better results, this should be combined with
     :class:`~helpfulfields.querysets.PublishingQuerySet`.
+
+    :test case: :class:`helpfulfields.tests.PublishingTestCase`
     """
 
     #: :class:`~django.db.models.BooleanField` deciding whether or not the
@@ -196,6 +204,8 @@ class DatePublishing(models.Model):
 
     For querying, this should be combined with
     :class:`~helpfulfields.querysets.DatePublishingQuerySet`.
+
+    :test case: :class:`helpfulfields.tests.DatePublishingTestCase`
     """
 
     #: Defaults to :meth:`datetime.datetime.now()` - the date on which this

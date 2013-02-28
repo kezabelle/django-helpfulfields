@@ -42,7 +42,7 @@ class TestModelDates(Titles, DatePublishing):
     objects = PassThroughManager.for_queryset_class(DatePublishingQuerySet)()
 
 
-class ChangeTrackingDjangoTestCase(DjangoTestCase):
+class ChangeTrackingTestCase(DjangoTestCase):
     """
     Should verify all the methods and attributes provided by something
     inheriting from ChangeTracking work correctly
@@ -105,7 +105,7 @@ class ChangeTrackingDjangoTestCase(DjangoTestCase):
             self.assertIsNone(obj.delete())
 
 
-class PublishingDjangoTestCase(DjangoTestCase):
+class PublishingTestCase(DjangoTestCase):
 
     def test_has_attribute(self):
         """
@@ -147,7 +147,7 @@ class PublishingDjangoTestCase(DjangoTestCase):
             obj2.delete()
 
 
-class DatePublishingDjangoTestCase(DjangoTestCase):
+class DatePublishingTestCase(DjangoTestCase):
     def test_has_attribute(self):
         """
         make sure our mixed together model gets the right attribute
@@ -205,7 +205,7 @@ class DatePublishingDjangoTestCase(DjangoTestCase):
         self.assertIsNone(obj.unpublish_on)
 
 
-class TitlesDjangoTestCase(DjangoTestCase):
+class TitlesTestCase(DjangoTestCase):
 
     def test_menutitle_method(self):
         """
@@ -222,7 +222,7 @@ class TitlesDjangoTestCase(DjangoTestCase):
         self.assertEqual(mtitle, obj.get_menu_title())
 
 
-class SEODjangoTestCase(DjangoTestCase):
+class SEOTestCase(DjangoTestCase):
     def test_provided_methods(self):
         """
         test the `get_menu_title` method, and force coverage.
@@ -281,13 +281,13 @@ class ChainQuerySetTestCase(DjangoTestCase):
 
 
 
-class SettingsDjangoTestCase(UnitTestCase):
+class SettingsTestCase(UnitTestCase):
     def test_for_values(self):
         self.assertEqual(RECENTLY_MINUTES, 30)
         self.assertEqual(MAX_NUM_RELATIONS, 3)
 
 
-class ViewOnSiteDjangoTestCase(DjangoTestCase):
+class ViewOnSiteTestCase(DjangoTestCase):
     def test_calling(self):
         obj = TestModel(title=u'view_on_site_obj')
         obj.save()
@@ -295,7 +295,7 @@ class ViewOnSiteDjangoTestCase(DjangoTestCase):
         self.assertIsNotNone(view_on_site(obj))
 
 
-class SparklineDjangoTestCase(DjangoTestCase):
+class SparklineTestCase(DjangoTestCase):
     def test_calling(self):
         obj = TestModel(title=u'view_on_site_obj')
         obj.save()

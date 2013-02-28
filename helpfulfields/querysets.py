@@ -33,6 +33,9 @@ class ChangeTrackingQuerySet(QuerySet):
     """
     A custom queryset for filtering models using the
     :class:`~helpfulfields.models.ChangeTracking` model.
+
+    :test case: :class:`helpfulfields.tests.ChangeTrackingTestCase`
+    :test case: :class:`helpfulfields.tests.ChainQuerySetTestCase`
     """
     def created_recently(self, **kwargs):
         """Goes hand in hand with the
@@ -75,6 +78,9 @@ class PublishingQuerySet(QuerySet):
     """
     A custom queryset for filtering things using the
     :class:`~helpfulfields.models.Publishing` abstract model via it's boolean.
+
+    :test case: :class:`helpfulfields.tests.PublishingTestCase`
+    :test case: :class:`helpfulfields.tests.ChainQuerySetTestCase`
     """
     def published(self):
         """
@@ -104,6 +110,8 @@ class DatePublishingQuerySet(QuerySet):
     A custom queryset for filtering things using the
     :class:`~helpfulfields.models.DatePublishing` abtract model via the new
     fields it provides.
+
+    :test case: :class:`helpfulfields.tests.DatePublishingTestCase`
     """
     def published(self):
         """
