@@ -2,6 +2,7 @@ About django-helpfulfields
 ==========================
 
 :author: Keryn Knight
+:status: Alpha
 
 Mostly a collection of `Django`_ models, querysets, and admin stuff. Because
 I'm tired of copy-pasting and tweaking the same bits over and over between
