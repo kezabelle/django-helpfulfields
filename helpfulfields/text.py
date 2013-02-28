@@ -51,7 +51,7 @@ seo_keywords_label = _(u'page keywords')
 #: the :attr:`~django.db.models.Field.help_text` for the
 #: :attr:`~helpfulfields.models.SEO.meta_keywords` field on
 #: :class:`~helpfulfields.models.SEO`
-seo_keywords_help = _(u'may be used by search engines to flag you as spamming.')
+seo_keywords_help = _(u'a list of words or phrases describing the content.')
 
 #: the name for the fieldset provided in
 #: :mod:`~helpfulfields.admin.seo_fieldset`
