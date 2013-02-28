@@ -74,9 +74,9 @@ current version::
 
     Name                      Stmts   Miss  Cover   Missing
     -------------------------------------------------------
-    helpfulfields/admin         113      9    92%   161, 285, 297-307, 314-320
-    helpfulfields/models         94      8    91%   282-287, 298-305
-    helpfulfields/querysets      39      6    85%   156-157, 167-168, 177-178
+    helpfulfields/admin         113      9    92%   163, 290, 302-312, 319-325
+    helpfulfields/models         94      8    91%   292-297, 308-315
+    helpfulfields/querysets      39      6    85%   164-165, 175-176, 185-186
     helpfulfields/settings        2      0   100%
     helpfulfields/text           37      1    97%   9
     -------------------------------------------------------

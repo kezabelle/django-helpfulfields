@@ -305,7 +305,7 @@ class SparklineTestCase(DjangoTestCase):
             LogEntry.objects.create(content_type=ct, object_id=obj.pk,
                                     user=user, action_flag=2)
         spark = LogEntrySparkline()
-        self.assertEqual(2703, len(spark(obj).strip()))
+        self.assertEqual(2377, len(spark(obj).strip()))
 
     def test_calling_empty(self):
         obj = TestModel(title=u'view_on_site_obj')
